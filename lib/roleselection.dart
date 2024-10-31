@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'login.dart';
+import 'loginTPO.dart';
+import 'loginstudent.dart';
+import 'loginteacher.dart';
 
 class RoleSelectionPage extends StatelessWidget {
   @override
@@ -63,7 +65,7 @@ class RoleSelectionPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const LoginPage(),
+                              builder: (context) => const LoginPageteacher(),
                             ),
                           );
                         },
@@ -82,20 +84,20 @@ class RoleSelectionPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const LoginPage(),
+                              builder: (context) => const LoginPageTPO(),
                             ),
                           );
                         },
                         child: RoleCard(
                           imagePath: 'assets/student.png',
-                          label: 'TPC',
+                          label: 'TPO',
                         ),
                       ),
                     ),
                   ],
                 ),
                 SizedBox(height: 20), // Space before the next line
-                // The Other Role card goes below the Row
+
                 SizedBox(
                   width: 150, // Set a fixed width for uniformity
                   child: GestureDetector(
@@ -103,13 +105,13 @@ class RoleSelectionPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LoginPage(),
+                          builder: (context) => const LoginPagestudent(),
                         ),
                       );
                     },
                     child: RoleCard(
                       imagePath: 'assets/other.png',
-                      label: 'Other Role',
+                      label: 'Student',
                     ),
                   ),
                 ),
