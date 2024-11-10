@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:recruite_ease/landingpagestudent.dart';
 import 'roleselection.dart';
+import 'package:recruite_ease/landingpage/landingpagestudent.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Ensure binding is initialized
+  await Firebase.initializeApp(
+    options:
+        DefaultFirebaseOptions.currentPlatform, // Pass the correct options here
+  );
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

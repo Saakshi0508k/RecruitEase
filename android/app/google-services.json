@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "362544415248",
+    "project_id": "recruitease-cc7ab",
+    "storage_bucket": "recruitease-cc7ab.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:362544415248:android:e2d462acab829d05ec4095",
+        "android_client_info": {
+          "package_name": "com.example.recruite_ease"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlGLFLb1kCExBUsnNm2U6QIrGDtplMvi0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

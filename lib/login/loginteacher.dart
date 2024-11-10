@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'landingpageteacher.dart';
+import '/landingpage/landingpageteacher.dart';
+import 'package:recruite_ease/landingpage/landingpageteacher.dart';
 
 class LoginPageteacher extends StatelessWidget {
   const LoginPageteacher({super.key});

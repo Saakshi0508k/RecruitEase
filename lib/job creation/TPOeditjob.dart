@@ -1,14 +1,17 @@
 import 'dart:io'; // Required for File class
 import 'package:flutter/material.dart';
 
-class AddJobPage extends StatefulWidget {
-  const AddJobPage({super.key});
+class TPOEditJob extends StatefulWidget {
+  final String jobId; // Declare jobId as a required parameter
+
+  const TPOEditJob(
+      {super.key, required this.jobId}); // Use this.jobId to pass the value
 
   @override
-  _AddJobPageState createState() => _AddJobPageState();
+  _TPOEditJobState createState() => _TPOEditJobState();
 }
 
-class _AddJobPageState extends State<AddJobPage> {
+class _TPOEditJobState extends State<TPOEditJob> {
   final _formKey = GlobalKey<FormState>();
 
   String _jobTitle = '';
@@ -17,11 +20,16 @@ class _AddJobPageState extends State<AddJobPage> {
   int _salary = 0;
   String _jobType = 'Full Time';
   String _jobDescription = '';
-  String _jobRole = ''; // New variable for Job Role
-  String _skills = ''; // New variable for Skills
   File? _image; // Change from XFile to File for local storage
 
   final List<String> _jobTypes = ['Full Time', 'Part Time', 'Contract'];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize any state variables or fetch job details based on jobId here
+    print("Editing job with ID: ${widget.jobId}");
+  }
 
   // Placeholder function for image upload
   Future<void> _uploadImage() async {
@@ -37,7 +45,7 @@ class _AddJobPageState extends State<AddJobPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Job'),
+        title: const Text('Edit Job'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -61,6 +69,7 @@ class _AddJobPageState extends State<AddJobPage> {
 
                 // Job Title
                 TextFormField(
+                  initialValue: _jobTitle,
                   decoration: const InputDecoration(labelText: 'Job Title'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -75,6 +84,7 @@ class _AddJobPageState extends State<AddJobPage> {
 
                 // Company Name
                 TextFormField(
+                  initialValue: _companyName,
                   decoration: const InputDecoration(labelText: 'Company Name'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -89,6 +99,7 @@ class _AddJobPageState extends State<AddJobPage> {
 
                 // City
                 TextFormField(
+                  initialValue: _city,
                   decoration: const InputDecoration(labelText: 'City'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -103,6 +114,7 @@ class _AddJobPageState extends State<AddJobPage> {
 
                 // Salary
                 TextFormField(
+                  initialValue: _salary.toString(),
                   decoration: const InputDecoration(labelText: 'Salary'),
                   keyboardType: TextInputType.number,
                   validator: (value) {
@@ -115,7 +127,7 @@ class _AddJobPageState extends State<AddJobPage> {
                     return null;
                   },
                   onChanged: (value) {
-                    _salary = int.parse(value);
+                    _salary = int.tryParse(value) ?? 0;
                   },
                 ),
 
@@ -136,37 +148,11 @@ class _AddJobPageState extends State<AddJobPage> {
                   decoration: const InputDecoration(labelText: 'Job Type'),
                 ),
 
-                // Job Role
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'Job Role'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a job role';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    _jobRole = value;
-                  },
-                ),
-
-                // Skills
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'Skills (comma separated)'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter required skills';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    _skills = value;
-                  },
-                ),
-
                 // Job Description
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'Job Description'),
+                  initialValue: _jobDescription,
+                  decoration:
+                      const InputDecoration(labelText: 'Job Description'),
                   maxLines: 5,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -184,12 +170,12 @@ class _AddJobPageState extends State<AddJobPage> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Handle job creation here, e.g., send data to a server
+                      // Handle job update here, e.g., send data to a server
                       // You can also navigate back to the previous screen
                       Navigator.pop(context);
                     }
                   },
-                  child: const Text('NEXT'),
+                  child: const Text('Save Changes'),
                 ),
               ],
             ),

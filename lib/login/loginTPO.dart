@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'landingpageTPO.dart';
+import '/landingpage/landingpageTPO.dart';
 
 class LoginPageTPO extends StatelessWidget {
   const LoginPageTPO({super.key});
