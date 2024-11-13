@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:recruite_ease/notification/studentnotif.dart';
+import 'package:recruite_ease/mock test/mockteststudent.dart';
 
 class LandingPageStudent extends StatefulWidget {
   final String studentUsername;
@@ -239,10 +240,19 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
           });
 
           if (index == 1) {
+            // Navigate to StudentNotificationPage when "Notifications" is tapped
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const StudentNotificationPage(),
+                builder: (context) => StudentNotificationPage(),
+              ),
+            );
+          } else if (index == 2) {
+            // Navigate to MockTeststudent when "Mock Tests" is tapped
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MockTeststudent(),
               ),
             );
           }
