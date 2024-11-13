@@ -252,7 +252,8 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MockTeststudent(),
+                builder: (context) =>
+                    MockTeststudent(studentUsername: studentUsername),
               ),
             );
           }

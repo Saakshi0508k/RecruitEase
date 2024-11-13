@@ -3,7 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'starttest.dart';
 
 class MockTeststudent extends StatelessWidget {
-  const MockTeststudent({super.key});
+  final String studentUsername;
+
+  const MockTeststudent({Key? key, required this.studentUsername})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +56,8 @@ class MockTeststudent extends StatelessWidget {
                         studentCount: 0, // Placeholder for student count
                         mockTestId:
                             mockTest.id, // Pass mockTest ID for navigation
-                        context: context,
+                        studentUsername:
+                            studentUsername, // Pass studentUsername
                       );
                     },
                   );
@@ -70,25 +74,28 @@ class MockTeststudent extends StatelessWidget {
 class MockTestCard extends StatelessWidget {
   final String title;
   final int studentCount;
-  final String mockTestId; // Add mockTestId for navigation
-  final BuildContext context;
+  final String mockTestId;
+  final String studentUsername; // Add studentUsername here
 
   const MockTestCard({
     required this.title,
     required this.studentCount,
-    required this.context,
     required this.mockTestId,
+    required this.studentUsername, // Add studentUsername as a required parameter
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigate to MockTestDetailPage
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Starttest(mockTestId: mockTestId),
+            builder: (context) => Starttest(
+              mockTestId: mockTestId,
+              studentUsername:
+                  studentUsername, // Pass studentUsername to Starttest
+            ),
           ),
         );
       },
@@ -127,14 +134,16 @@ class MockTestCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            // Add the "Start Quiz" button
             ElevatedButton(
               onPressed: () {
-                // Navigate to the quiz page or start the quiz logic
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Starttest(mockTestId: mockTestId),
+                    builder: (context) => Starttest(
+                      mockTestId: mockTestId,
+                      studentUsername:
+                          studentUsername, // Pass studentUsername here as well
+                    ),
                   ),
                 );
               },

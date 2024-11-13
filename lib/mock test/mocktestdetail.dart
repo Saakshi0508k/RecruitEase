@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MockTestDetailPage extends StatelessWidget {
-  final String mockTestId; // Document ID of the selected mock test
+  final String mockTestId;
+  final String? studentUsername; // Make this optional
 
-  const MockTestDetailPage({required this.mockTestId, Key? key})
-      : super(key: key);
+  const MockTestDetailPage({
+    Key? key,
+    required this.mockTestId,
+    this.studentUsername, // Make this parameter optional
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
