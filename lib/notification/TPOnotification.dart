@@ -10,8 +10,19 @@ class NotificationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notification'),
+        title: Text(
+          'Notifications',
+          style: TextStyle(color: Colors.white), // White text color
+        ),
+        backgroundColor: Color(0xFF0A2E4D), // AppBar background color
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back button
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
+      backgroundColor: Colors.white,
       body: StreamBuilder<QuerySnapshot>(
         stream: notificationsCollection
             .orderBy('createdAt', descending: true)
@@ -52,7 +63,8 @@ class NotificationPage extends StatelessWidget {
             ),
           );
         },
-        child: Icon(Icons.add),
+        backgroundColor: Color(0xFF0A2E4D), // Button color
+        child: Icon(Icons.add, color: Colors.white), // White "+" icon
       ),
     );
   }
@@ -88,19 +100,39 @@ class NotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      elevation: 4,
+      shadowColor: Colors.black.withOpacity(0.1),
       child: ListTile(
-        leading: Icon(Icons.notifications),
-        title: Text(notification.title),
+        contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        leading: Icon(Icons.notifications, color: Color(0xFF0A2E4D)),
+        title: Text(
+          notification.title,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Colors.black,
+          ),
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(notification.subtitle),
+            Text(
+              notification.subtitle,
+              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+            ),
             SizedBox(height: 4),
-            Text(notification.timeAgo, style: TextStyle(fontSize: 12)),
+            Text(
+              notification.timeAgo,
+              style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+            ),
           ],
         ),
         trailing: IconButton(
-          icon: Icon(Icons.delete),
+          icon: Icon(Icons.delete, color: Colors.red),
           onPressed: () {
             _showDeleteConfirmationDialog(context, notification.id);
           },
@@ -117,12 +149,13 @@ class NotificationCard extends StatelessWidget {
         return AlertDialog(
           title: Text('Remove Notification'),
           content: Text('Are you sure you want to delete this notification?'),
+          backgroundColor: Colors.white,
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('NO'),
+              child: Text('NO', style: TextStyle(color: Colors.blue)),
             ),
             TextButton(
               onPressed: () async {
@@ -132,7 +165,10 @@ class NotificationCard extends StatelessWidget {
                     .delete();
                 Navigator.pop(context);
               },
-              child: Text('REMOVE NOTIFICATION'),
+              child: Text(
+                'REMOVE NOTIFICATION',
+                style: TextStyle(color: Colors.red),
+              ),
             ),
           ],
         );

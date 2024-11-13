@@ -29,8 +29,16 @@ class _PlacementOfficerScreenState extends State<PlacementOfficerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Placement Officer'),
+        title: Text('Placement Coordinator', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFF0A2E4D),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back button
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

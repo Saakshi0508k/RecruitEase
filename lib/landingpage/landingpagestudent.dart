@@ -4,10 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:recruite_ease/notification/studentnotif.dart';
 
 class LandingPageStudent extends StatefulWidget {
-  final String studentUsername; // Add studentUsername to the constructor
+  final String studentUsername;
 
-  const LandingPageStudent(
-      {super.key, required this.studentUsername}); // Constructor
+  const LandingPageStudent({super.key, required this.studentUsername});
 
   @override
   _LandingPageStudentState createState() => _LandingPageStudentState();
@@ -16,44 +15,38 @@ class LandingPageStudent extends StatefulWidget {
 class _LandingPageStudentState extends State<LandingPageStudent> {
   int _currentIndex = 0;
   String studentName = '';
-  late String studentUsername; // Declare studentUsername
+  late String studentUsername;
   List<Map<String, dynamic>> forYouJobs = [];
   List<Map<String, dynamic>> upcomingOpportunities = [];
   bool isLoading = true;
 
-  // Firestore references
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
     super.initState();
-    studentUsername =
-        widget.studentUsername; // Get the studentUsername passed from login
+    studentUsername = widget.studentUsername;
     _fetchStudentData();
     _fetchJobData();
   }
 
-  // Fetch student name based on the username entered during login
   Future<void> _fetchStudentData() async {
-    // Query the Firestore collection for the student document using username
     try {
       QuerySnapshot snapshot = await _firestore
           .collection('students')
-          .where('username',
-              isEqualTo: studentUsername) // Match the username field
+          .where('username', isEqualTo: studentUsername)
           .get();
 
       if (snapshot.docs.isNotEmpty) {
         DocumentSnapshot studentDoc = snapshot.docs.first;
         setState(() {
-          studentName =
-              studentDoc['name'] ?? 'Student'; // Retrieve name from Firestore
-          isLoading = false; // Set loading to false after data is fetched
+          studentName = studentDoc['name'] ?? 'Student';
+          isLoading = false;
         });
       } else {
         setState(() {
-          studentName = 'Student Not Found'; // Show error if student not found
+          studentName = 'Student Not Found';
           isLoading = false;
         });
       }
@@ -66,35 +59,32 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
     }
   }
 
-  // Fetch jobs from Firebase Firestore for 'For You' and 'Upcoming Opportunities'
   Future<void> _fetchJobData() async {
     try {
       QuerySnapshot jobSnapshot = await _firestore.collection('jobs').get();
       List<Map<String, dynamic>> forYouJobsTemp = [];
       List<Map<String, dynamic>> upcomingOpportunitiesTemp = [];
 
-      jobSnapshot.docs.forEach((jobDoc) {
+      for (var jobDoc in jobSnapshot.docs) {
         String jobTitle = jobDoc['jobTitle'] ?? 'No Title';
         String companyName = jobDoc['companyName'] ?? 'No Company';
         String jobLog = jobDoc['jobDescription'] ?? 'No Description';
-        String imageUrl = jobDoc['imageUrl'] ?? ''; // Fetching the image URL
+        String imageUrl = jobDoc['imageUrl'] ?? '';
 
-        // For demo, we just divide jobs into two categories
         forYouJobsTemp.add({
           'title': jobTitle,
           'company': companyName,
           'log': jobLog,
-          'imageUrl': imageUrl, // Add image URL here
+          'imageUrl': imageUrl,
         });
-        {
-          upcomingOpportunitiesTemp.add({
-            'title': jobTitle,
-            'company': companyName,
-            'log': jobLog,
-            'imageUrl': imageUrl, // Add image URL here
-          });
-        }
-      });
+
+        upcomingOpportunitiesTemp.add({
+          'title': jobTitle,
+          'company': companyName,
+          'log': jobLog,
+          'imageUrl': imageUrl,
+        });
+      }
 
       setState(() {
         forYouJobs = forYouJobsTemp;
@@ -107,8 +97,6 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
 
   @override
   Widget build(BuildContext context) {
-    studentUsername =
-        widget.studentUsername; // Get the studentUsername passed from login
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -125,7 +113,7 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                   style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
                 isLoading
-                    ? const CircularProgressIndicator() // Show loading indicator
+                    ? const CircularProgressIndicator()
                     : Text(
                         studentName.isNotEmpty ? studentName : 'Loading...',
                         style: const TextStyle(
@@ -144,8 +132,7 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
         ),
       ),
       body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator()) // Show loading if fetching
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,44 +142,34 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Card(
                       elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Container(
-                        height: 170,
-                        decoration: BoxDecoration(
-                          color: Colors.indigo[900],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                      color: const Color(0xFF0A2E4D),
+                      child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Row(
                           children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: const [
-                                  Text(
-                                    'Insight drives impact',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  'Insight drives impact',
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
                                   ),
-                                  SizedBox(height: 5),
-                                  Text(
-                                    'Know the role, know the company',
-                                    style: TextStyle(
-                                        fontSize: 14, color: Colors.white),
-                                  ),
-                                  SizedBox(height: 5),
-                                  Text(
-                                    'make your mark.',
-                                    style: TextStyle(
-                                        fontSize: 14, color: Colors.white),
-                                  ),
-                                ],
-                              ),
+                                ),
+                                SizedBox(height: 8.0),
+                                Text(
+                                  'Know the role, know the company,\nmake your mark.',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(width: 10),
+                            Image.asset(
+                              'assets/manage_activities.png',
+                              width: 50,
+                              height: 50,
                             ),
                           ],
                         ),
@@ -200,9 +177,9 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: const Text(
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
                       'For You',
                       style: TextStyle(
                           fontSize: 24,
@@ -211,7 +188,7 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Container(
+                  SizedBox(
                     height: 230,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
@@ -226,9 +203,9 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: const Text(
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
                       'Upcoming Opportunities',
                       style: TextStyle(
                           fontSize: 24,
@@ -237,7 +214,7 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Container(
+                  SizedBox(
                     height: 230,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
@@ -261,18 +238,16 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
             _currentIndex = index;
           });
 
-          // Check if the "Notifications" tab (index 1) is tapped
           if (index == 1) {
-            // Navigate to StudentNotificationPage and pass the currentUsername
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => StudentNotificationPage(), // Corrected
+                builder: (context) => const StudentNotificationPage(),
               ),
             );
           }
         },
-        backgroundColor: Colors.indigo[900],
+        backgroundColor: const Color(0xFF0A2E4D),
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey[400],
         type: BottomNavigationBarType.fixed,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'TPOjobdetails.dart'; // Import the TPOJobDetails page
-import 'TPOaddjob.dart'; // Import the Add Job page
+import 'TPOjobdetails.dart';
+import 'TPOaddjob.dart';
 
 class JobsPage extends StatefulWidget {
   const JobsPage({super.key});
@@ -15,28 +15,19 @@ class _JobsPageState extends State<JobsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Jobs'),
+        title: const Text(
+          'Jobs',
+          style: TextStyle(color: Colors.white), // Set text color to white
+        ),
+        backgroundColor: Color(0xFF0A2E4D),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back button
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              // Navigate to the Add Job page
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AddJobPage(),
-                ),
-              );
-            },
-          ),
-        ],
       ),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -59,8 +50,7 @@ class _JobsPageState extends State<JobsPage> {
             // Job List using StreamBuilder
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream:
-                    FirebaseFirestore.instance.collection('jobs').snapshots(),
+                stream: FirebaseFirestore.instance.collection('jobs').snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -69,7 +59,6 @@ class _JobsPageState extends State<JobsPage> {
                     return const Center(child: Text("No jobs available"));
                   }
 
-                  // Map the documents to the Job model
                   final jobs = snapshot.data!.docs.map((doc) {
                     return Job(
                       jobId: doc.id,
@@ -80,11 +69,7 @@ class _JobsPageState extends State<JobsPage> {
                       jobType: doc['jobType'] ?? '',
                       salary: doc['salary'] ?? 0,
                       skills: List<String>.from(
-                        (doc['skills'] is List)
-                            ? doc['skills']
-                            : [
-                                doc['skills'] ?? ''
-                              ], // If it's not a list, wrap it in a list
+                        (doc['skills'] is List) ? doc['skills'] : [doc['skills'] ?? ''],
                       ),
                       jobDescription: doc['jobDescription'] ?? '',
                     );
@@ -132,9 +117,29 @@ class _JobsPageState extends State<JobsPage> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddJobPage(),
+            ),
+          );
+        },
+        backgroundColor: Color(0xFF0A2E4D), // Set button color
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12), // Square shape with rounded corners
+        ),
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat, // Align to bottom-right
     );
   }
 }
+
+// Job and JobCard classes remain unchanged
+// ... Rest of the code for Job and JobCard class
+
 
 class Job {
   final String jobId;

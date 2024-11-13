@@ -61,9 +61,9 @@ class LoginPageteacher extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: const Color(0xFF0A2E4D),
               ),
-              child: const Text('Login'),
+              child: const Text('Login', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
