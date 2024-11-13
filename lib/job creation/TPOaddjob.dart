@@ -47,11 +47,9 @@ class _AddJobPageState extends State<AddJobPage> {
   Future<void> _saveJob() async {
     if (_formKey.currentState!.validate()) {
       try {
-        // Generate a unique job ID
         final jobDocRef = _firestore.collection('jobs').doc();
         final jobId = jobDocRef.id;
 
-        // Upload image to Firebase Storage if it exists
         String? imageUrl;
         if (_imageData != null) {
           final storageRef = _storage.ref().child('job_images/$jobId');
@@ -59,9 +57,8 @@ class _AddJobPageState extends State<AddJobPage> {
           imageUrl = await storageRef.getDownloadURL();
         }
 
-        // Save job data to Firestore with the unique jobId
         await jobDocRef.set({
-          'jobId': jobId, // Store the unique jobId in the document
+          'jobId': jobId,
           'jobTitle': _jobTitle,
           'companyName': _companyName,
           'city': _city,
@@ -77,8 +74,6 @@ class _AddJobPageState extends State<AddJobPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Job added successfully')),
         );
-
-        // Navigate to the next page and pass the jobId
         Navigator.pop(context, jobId);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -92,105 +87,141 @@ class _AddJobPageState extends State<AddJobPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Job'),
+        backgroundColor: const Color(0xFF0A2E4D),
+        elevation: 4,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                if (_imageData != null)
-                  Image.memory(
-                    _imageData!,
-                    height: 150,
-                  ),
-                ElevatedButton(
-                  onPressed: _uploadImage,
-                  child: const Text('Upload Image'),
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            elevation: 0,
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    // Image Upload Section
+                    if (_imageData != null)
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage: MemoryImage(_imageData!),
+                        backgroundColor: Colors.grey[200],
+                      )
+                    else
+                      IconButton(
+                        icon: Icon(Icons.add_a_photo, color: Colors.grey[600], size: 40),
+                        onPressed: _uploadImage,
+                      ),
+                    const SizedBox(height: 16.0),
+                    _buildTextField('Job Title', Icons.title, (value) => _jobTitle = value),
+                    _buildTextField('Company Name', Icons.business, (value) => _companyName = value),
+                    _buildTextField('City', Icons.location_city, (value) => _city = value),
+                    _buildNumberField('Salary', Icons.attach_money, (value) => _salary = int.parse(value)),
+                    _buildDropdownField(),
+                    _buildTextField('Job Role', Icons.work, (value) => _jobRole = value),
+                    _buildTextField('Skills (comma separated)', Icons.code, (value) => _skills = value),
+                    _buildTextField('Job Description', Icons.description, (value) => _jobDescription = value, maxLines: 4),
+                    const SizedBox(height: 20.0),
+                    ElevatedButton.icon(
+                      onPressed: _saveJob,
+                      label: const Text('Save Job', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0A2E4D),
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        textStyle: const TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'Job Title'),
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Please enter a job title'
-                      : null,
-                  onChanged: (value) => _jobTitle = value,
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'Company Name'),
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Please enter a company name'
-                      : null,
-                  onChanged: (value) => _companyName = value,
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'City'),
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Please enter a city'
-                      : null,
-                  onChanged: (value) => _city = value,
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'Salary'),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a salary';
-                    }
-                    if (int.tryParse(value) == null) {
-                      return 'Please enter a valid number';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) => _salary = int.parse(value),
-                ),
-                DropdownButtonFormField<String>(
-                  value: _jobType,
-                  items: _jobTypes.map((type) {
-                    return DropdownMenuItem<String>(
-                      value: type,
-                      child: Text(type),
-                    );
-                  }).toList(),
-                  onChanged: (value) => setState(() {
-                    _jobType = value!;
-                  }),
-                  decoration: const InputDecoration(labelText: 'Job Type'),
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'Job Role'),
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Please enter a job role'
-                      : null,
-                  onChanged: (value) => _jobRole = value,
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: 'Skills (comma separated)'),
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Please enter required skills'
-                      : null,
-                  onChanged: (value) => _skills = value,
-                ),
-                TextFormField(
-                  decoration:
-                      const InputDecoration(labelText: 'Job Description'),
-                  maxLines: 5,
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Please enter a job description'
-                      : null,
-                  onChanged: (value) => _jobDescription = value,
-                ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: _saveJob,
-                  child: const Text('Save Job'),
-                ),
-              ],
+              ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, IconData icon, ValueChanged<String> onChanged, {int maxLines = 1}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          filled: true,
+          fillColor: Colors.grey[100],
+        ),
+        maxLines: maxLines,
+        validator: (value) => value == null || value.isEmpty ? 'Please enter $label' : null,
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  Widget _buildNumberField(String label, IconData icon, ValueChanged<String> onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          filled: true,
+          fillColor: Colors.grey[100],
+        ),
+        keyboardType: TextInputType.number,
+        validator: (value) {
+          if (value == null || value.isEmpty) return 'Please enter $label';
+          if (int.tryParse(value) == null) return 'Please enter a valid number';
+          return null;
+        },
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  Widget _buildDropdownField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: DropdownButtonFormField<String>(
+        value: _jobType,
+        items: _jobTypes.map((type) {
+          return DropdownMenuItem<String>(
+            value: type,
+            child: Text(type),
+          );
+        }).toList(),
+        onChanged: (value) => setState(() {
+          _jobType = value!;
+        }),
+        decoration: InputDecoration(
+          labelText: 'Job Type',
+          prefixIcon: const Icon(Icons.schedule),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          filled: true,
+          fillColor: Colors.grey[100],
         ),
       ),
     );

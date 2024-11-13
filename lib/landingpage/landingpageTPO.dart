@@ -21,11 +21,27 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Icon(Icons.person, size: 50.0),
             SizedBox(width: 10.0),
-            Text(
-              'Administrator',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Hello',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0D013F),
+                  ),
+                ),
+                Text(
+                  'Admin',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0D013F),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -40,29 +56,50 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
             // Top Card
             Card(
               elevation: 4,
-              color: Colors.indigo[900],
+              color: Color(0xFF0A2E4D), 
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: SizedBox(
-                  height: 130,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Manage Activities',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                child: Row(
+                  children: [
+                    SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Manage Activities',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(
-                        'Handle all the placement-related activities here with us.',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
+                        SizedBox(height: 8.0),
+                        Text(
+                          'Handle all the placement\nrelated activities here with us.',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        // Image beside the text
+                    Image.asset(
+                      'assets/manage_activities.png', // Replace with actual image path
+                      width: 20,
+                      height: 50,
+                    ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 16.0),
+            // "Administer" text field
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                'Administer',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
               ),
             ),
@@ -79,7 +116,7 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
                   _buildJobsGridItem(),
                   _buildGridItem(Icons.list, '7', 'Mock Test'),
                   _buildAlertsGridItem(),
-                  _buildGridItem(Icons.person, '3', 'Placement Officer'),
+                  _buildGridItem(Icons.person, '3', 'Placement Coordinator'),
                 ],
               ),
             ),
@@ -97,7 +134,7 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
           // Handle Student Database action
         } else if (title == 'Mock Test') {
           // Handle Mock Test action
-        } else if (title == 'Placement Officer') {
+        } else if (title == 'Placement Coordinator') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => PlacementOfficerScreen()),
@@ -105,8 +142,8 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
         }
       },
       child: Card(
-        elevation: 4,
-        color: Color(0xFFFAF9F6),
+        elevation: 2,
+        color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -147,8 +184,8 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
         );
       },
       child: Card(
-        elevation: 4,
-        color: Color(0xFFFAF9F6),
+        elevation: 2,
+        color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -186,8 +223,8 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
         );
       },
       child: Card(
-        elevation: 4,
-        color: Color(0xFFFAF9F6),
+        elevation: 2,
+        color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

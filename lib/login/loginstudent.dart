@@ -104,6 +104,7 @@ class _LoginPagestudentState extends State<LoginPagestudent> {
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
+                color: const Color(0xFF0A2E4D),
               ),
             ),
             const SizedBox(height: 20),
@@ -133,9 +134,9 @@ class _LoginPagestudentState extends State<LoginPagestudent> {
             ElevatedButton(
               onPressed: _login, // Call the login method
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: const Color(0xFF0A2E4D),
               ),
-              child: const Text('Login'),
+              child: const Text('Login', style: TextStyle(color: Colors.white)),
             ),
             const SizedBox(height: 20),
             // Add "New to RecruitEase? Sign In" Text Button
