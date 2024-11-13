@@ -1,5 +1,6 @@
 import 'dart:io'; // Required for File class
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class TPOEditJob extends StatefulWidget {
   final String jobId; // Declare jobId as a required parameter
@@ -13,7 +14,7 @@ class TPOEditJob extends StatefulWidget {
 class _TPOEditJobState extends State<TPOEditJob> {
   final _formKey = GlobalKey<FormState>();
 
-  String _jobTitle = '';
+  String _Criteria = '';
   String _companyName = '';
   String _city = '';
   int _salary = 0;
@@ -28,24 +29,37 @@ class _TPOEditJobState extends State<TPOEditJob> {
     super.initState();
     // Initialize any state variables or fetch job details based on jobId here
     print("Editing job with ID: ${widget.jobId}");
+    // Fetch job data and populate fields if necessary (e.g., from Firestore)
   }
 
-  // Placeholder function for image upload
+  // Function to select an image
   Future<void> _uploadImage() async {
-    // Here, implement your logic for image upload (e.g., from a file picker)
-    // For demonstration, we'll just simulate selecting an image
-    setState(() {
-      // Simulate an image being selected
-      _image = File('path/to/your/image.png'); // Replace with actual image path
-    });
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path); // Convert XFile to File
+      });
+    }
+  }
+
+  // Placeholder function for saving the edited job
+  Future<void> _saveJob() async {
+    if (_formKey.currentState!.validate()) {
+      // Handle job update here (e.g., send data to server or Firestore)
+      // Save job information, e.g., update Firestore with the new values
+      print('Job Updated');
+      Navigator.pop(context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-title: Text(
-          'Edit',
+        title: Text(
+          'Edit Job',
           style: TextStyle(color: Colors.white), // White text color
         ),
         backgroundColor: const Color(0xFF0A2E4D),
@@ -86,7 +100,7 @@ title: Text(
                         onPressed: _uploadImage,
                       ),
                     const SizedBox(height: 16.0),
-                    _buildTextField('Job Title', Icons.title, (value) => _jobTitle = value, initialValue: _jobTitle),
+                    _buildTextField('Criteria', Icons.circle_notifications_outlined, (value) => _Criteria = value, initialValue: _Criteria),
                     _buildTextField('Company Name', Icons.business, (value) => _companyName = value, initialValue: _companyName),
                     _buildTextField('City', Icons.location_city, (value) => _city = value, initialValue: _city),
                     _buildNumberField('Salary', Icons.attach_money, (value) => _salary = int.parse(value), initialValue: _salary.toString()),
@@ -94,12 +108,7 @@ title: Text(
                     _buildTextField('Job Description', Icons.description, (value) => _jobDescription = value, initialValue: _jobDescription, maxLines: 5),
                     const SizedBox(height: 20.0),
                     ElevatedButton.icon(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          // Handle job update here, e.g., send data to a server
-                          Navigator.pop(context);
-                        }
-                      },
+                      onPressed: _saveJob, // Save changes when button is pressed
                       label: const Text('Save Changes', style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF0A2E4D),
@@ -120,6 +129,7 @@ title: Text(
     );
   }
 
+  // Text field for input
   Widget _buildTextField(String label, IconData icon, ValueChanged<String> onChanged, {String? initialValue, int maxLines = 1}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -141,6 +151,7 @@ title: Text(
     );
   }
 
+  // Number field for salary input
   Widget _buildNumberField(String label, IconData icon, ValueChanged<String> onChanged, {String? initialValue}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -166,6 +177,7 @@ title: Text(
     );
   }
 
+  // Dropdown menu for job type
   Widget _buildDropdownField() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),

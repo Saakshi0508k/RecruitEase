@@ -16,7 +16,7 @@ class _AddJobPageState extends State<AddJobPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  String _jobTitle = '';
+  double _Criteria = 0.0; // Change Criteria type to double
   String _companyName = '';
   String _city = '';
   int _salary = 0;
@@ -59,7 +59,7 @@ class _AddJobPageState extends State<AddJobPage> {
 
         await jobDocRef.set({
           'jobId': jobId,
-          'jobTitle': _jobTitle,
+          'Criteria': _Criteria, // Save Criteria as double
           'companyName': _companyName,
           'city': _city,
           'salary': _salary,
@@ -125,7 +125,7 @@ class _AddJobPageState extends State<AddJobPage> {
                         onPressed: _uploadImage,
                       ),
                     const SizedBox(height: 16.0),
-                    _buildTextField('Job Title', Icons.title, (value) => _jobTitle = value),
+                    _buildDoubleField('Criteria', Icons.circle_notifications_rounded, (value) => _Criteria = value),
                     _buildTextField('Company Name', Icons.business, (value) => _companyName = value),
                     _buildTextField('City', Icons.location_city, (value) => _city = value),
                     _buildNumberField('Salary', Icons.attach_money, (value) => _salary = int.parse(value)),
@@ -172,6 +172,30 @@ class _AddJobPageState extends State<AddJobPage> {
         maxLines: maxLines,
         validator: (value) => value == null || value.isEmpty ? 'Please enter $label' : null,
         onChanged: onChanged,
+      ),
+    );
+  }
+
+  Widget _buildDoubleField(String label, IconData icon, ValueChanged<double> onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          filled: true,
+          fillColor: Colors.grey[100],
+        ),
+        keyboardType: TextInputType.numberWithOptions(decimal: true),
+        validator: (value) {
+          if (value == null || value.isEmpty) return 'Please enter $label';
+          if (double.tryParse(value) == null) return 'Please enter a valid number';
+          return null;
+        },
+        onChanged: (value) => onChanged(double.tryParse(value) ?? 0.0),
       ),
     );
   }

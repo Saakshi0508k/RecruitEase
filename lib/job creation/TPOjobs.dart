@@ -62,7 +62,7 @@ class _JobsPageState extends State<JobsPage> {
                   final jobs = snapshot.data!.docs.map((doc) {
                     return Job(
                       jobId: doc.id,
-                      title: doc['jobTitle'] ?? '',
+                      Criteria: (doc['Criteria'] as num?)?.toDouble() ?? 0.0, // Ensure Criteria is double
                       company: doc['companyName'] ?? '',
                       logoUrl: doc['imageUrl'] ?? '',
                       jobRole: doc['jobRole'] ?? '',
@@ -85,7 +85,7 @@ class _JobsPageState extends State<JobsPage> {
                             MaterialPageRoute(
                               builder: (context) => TPOJobDetails(
                                 jobId: jobs[index].jobId,
-                                title: jobs[index].title,
+                                Criteria: jobs[index].Criteria,
                                 company: jobs[index].company,
                                 logoUrl: jobs[index].logoUrl,
                                 jobRole: jobs[index].jobRole,
@@ -99,7 +99,7 @@ class _JobsPageState extends State<JobsPage> {
                         },
                         child: JobCard(
                           jobId: jobs[index].jobId,
-                          title: jobs[index].title,
+                          Criteria: jobs[index].Criteria,
                           company: jobs[index].company,
                           logoUrl: jobs[index].logoUrl,
                           jobRole: jobs[index].jobRole,
@@ -137,13 +137,10 @@ class _JobsPageState extends State<JobsPage> {
   }
 }
 
-// Job and JobCard classes remain unchanged
-// ... Rest of the code for Job and JobCard class
-
-
+// Updated Job and JobCard classes to handle Criteria as double
 class Job {
   final String jobId;
-  final String title;
+  final double Criteria; // Changed to double
   final String company;
   final String logoUrl;
   final String jobRole;
@@ -154,7 +151,7 @@ class Job {
 
   const Job({
     required this.jobId,
-    required this.title,
+    required this.Criteria,
     required this.company,
     required this.logoUrl,
     required this.jobRole,
@@ -167,7 +164,7 @@ class Job {
 
 class JobCard extends StatelessWidget {
   final String jobId;
-  final String title;
+  final double Criteria; // Changed to double
   final String company;
   final String logoUrl;
   final String jobRole;
@@ -179,7 +176,7 @@ class JobCard extends StatelessWidget {
   const JobCard({
     super.key,
     required this.jobId,
-    required this.title,
+    required this.Criteria,
     required this.company,
     required this.logoUrl,
     required this.jobRole,
@@ -196,7 +193,7 @@ class JobCard extends StatelessWidget {
         leading: CircleAvatar(
           backgroundImage: NetworkImage(logoUrl),
         ),
-        title: Text(title),
+        title: Text('Criteria: ${Criteria.toStringAsFixed(1)}'), // Format Criteria for display
         subtitle: Text(company),
         onTap: () {
           Navigator.push(
@@ -204,7 +201,7 @@ class JobCard extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => TPOJobDetails(
                 jobId: jobId,
-                title: title,
+                Criteria: Criteria,
                 company: company,
                 logoUrl: logoUrl,
                 jobRole: jobRole,

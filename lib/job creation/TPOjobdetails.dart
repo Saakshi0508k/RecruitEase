@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'TPOeditjob.dart';
 import 'studentsAppliedlist.dart';
+
 class TPOJobDetails extends StatelessWidget {
   final String jobId;
-  final String title;
+  final double Criteria; // Criteria as double
   final String company;
   final String logoUrl;
   final String jobRole;
@@ -15,7 +16,7 @@ class TPOJobDetails extends StatelessWidget {
   const TPOJobDetails({
     super.key,
     required this.jobId,
-    required this.title,
+    required this.Criteria,
     required this.company,
     required this.logoUrl,
     required this.jobRole,
@@ -30,7 +31,7 @@ class TPOJobDetails extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          title,
+          'Criteria: ${Criteria.toStringAsFixed(1)}', // Display Criteria as a formatted string
           style: const TextStyle(color: Color(0xFF0A2E4D)),
         ),
         backgroundColor: Colors.white,
@@ -40,7 +41,6 @@ class TPOJobDetails extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.edit, color: Color(0xFF0A2E4D)),
             onPressed: () {
-              // Navigate to edit page
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => TPOEditJob(jobId: jobId)),
@@ -61,15 +61,12 @@ class TPOJobDetails extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Centered Circle with fetched image
             CircleAvatar(
               radius: 70,
               backgroundColor: const Color(0xFF0A2E4D),
               backgroundImage: NetworkImage(logoUrl),
             ),
             const SizedBox(height: 20),
-
-            // Job Role (centered)
             Text(
               jobRole,
               style: const TextStyle(
@@ -80,8 +77,6 @@ class TPOJobDetails extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-
-            // Company Name (centered)
             Text(
               company,
               style: const TextStyle(
@@ -91,11 +86,8 @@ class TPOJobDetails extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-
-            // Card with a single user icon and "Students Applied" text
             GestureDetector(
               onTap: () {
-                // Navigate to the StudentApplied page when tapped
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => StudentAppliedPage(jobId: jobId)),
@@ -112,7 +104,6 @@ class TPOJobDetails extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Single user icon (representing a student)
                       Row(
                         children: [
                           CircleAvatar(
@@ -122,8 +113,6 @@ class TPOJobDetails extends StatelessWidget {
                           ),
                         ],
                       ),
-
-                      // "Students Applied" text in bold
                       Text(
                         'Students Applied',
                         style: const TextStyle(
@@ -132,16 +121,12 @@ class TPOJobDetails extends StatelessWidget {
                           color: Color(0xFF0A2E4D),
                         ),
                       ),
-
-                      // Right arrow icon
                       const Icon(Icons.arrow_forward_ios, color: Color(0xFF0A2E4D), size: 20),
                     ],
                   ),
                 ),
               ),
             ),
-
-            // Expanded Details Card
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -157,7 +142,6 @@ class TPOJobDetails extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Role
                         const Text(
                           'Role',
                           style: TextStyle(
@@ -168,8 +152,6 @@ class TPOJobDetails extends StatelessWidget {
                         ),
                         Text(jobRole, style: const TextStyle(fontSize: 15, color: Color(0xFF0A2E4D))),
                         const SizedBox(height: 12),
-
-                        // Job Type
                         const Text(
                           'Job Type',
                           style: TextStyle(
@@ -180,8 +162,6 @@ class TPOJobDetails extends StatelessWidget {
                         ),
                         Text(jobType, style: const TextStyle(fontSize: 15, color: Color(0xFF0A2E4D))),
                         const SizedBox(height: 12),
-
-                        // Salary
                         const Text(
                           'Salary',
                           style: TextStyle(
@@ -192,8 +172,6 @@ class TPOJobDetails extends StatelessWidget {
                         ),
                         Text('\$${salary.toString()}', style: const TextStyle(fontSize: 15, color: Color(0xFF0A2E4D))),
                         const SizedBox(height: 12),
-
-                        // Skills
                         const Text(
                           'Skills',
                           style: TextStyle(
@@ -204,8 +182,6 @@ class TPOJobDetails extends StatelessWidget {
                         ),
                         Text(skills.join(', '), style: const TextStyle(fontSize: 15, color: Color(0xFF0A2E4D))),
                         const SizedBox(height: 12),
-
-                        // Job Description
                         const Text(
                           'Job Description',
                           style: TextStyle(
@@ -231,7 +207,6 @@ class TPOJobDetails extends StatelessWidget {
     );
   }
 
-  // Function to show delete confirmation dialog
   void _showDeleteConfirmationDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -242,14 +217,13 @@ class TPOJobDetails extends StatelessWidget {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel', style: TextStyle(color: Color(0xFF0A2E4D))),
             ),
             TextButton(
               onPressed: () {
-                // Add delete logic here
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),
