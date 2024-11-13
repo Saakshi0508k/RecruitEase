@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import '/notification/TPOnotification.dart';
+import '/TPClist.dart'; // Import tpclist.dart
+import 'package:recruite_ease/job creation/TPOjobs.dart';
+import 'package:recruite_ease/mock test/mocktest.dart'; // Import the MockTestPage
 
 class LandingPageTeacher extends StatefulWidget {
   const LandingPageTeacher({super.key});
@@ -8,8 +12,6 @@ class LandingPageTeacher extends StatefulWidget {
 }
 
 class _LandingPageTeacherState extends State<LandingPageTeacher> {
-  int _currentIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,174 +19,192 @@ class _LandingPageTeacherState extends State<LandingPageTeacher> {
         automaticallyImplyLeading: false, // Prevents back arrow
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Greeting Text on the left
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  'Hello',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black87,
-                  ),
-                ),
-                Text(
-                  'Sakshi Kupekar',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
-            ),
-            // Profile Picture on the right
-            CircleAvatar(
-              radius: 20, // Adjust size as needed
-              backgroundImage: AssetImage(
-                  'assets/profile_pic.jpg'), // Path to your profile picture
-            ),
-          ],
-        ),
+        title: const Text(''),
       ),
-      body: SingleChildScrollView(
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 15), // Adjust this value as needed
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Container(
-                  height: 170,
-                  decoration: BoxDecoration(
-                    color: Colors.indigo[900],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: const EdgeInsets.all(16.0),
+            SizedBox(height: 20.0),
+            // Top Card
+            Card(
+              elevation: 4,
+              color: Colors.indigo[900],
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SizedBox(
+                  height: 130,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Insight drives impact',
+                      Text(
+                        'Manage Activities',
                         style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
-                      const SizedBox(height: 5),
-                      const Text(
-                        'Know the role, know the company',
-                        style: TextStyle(fontSize: 14, color: Colors.white),
-                      ),
-                      const SizedBox(height: 5),
-                      const Text(
-                        'make your mark.',
-                        style: TextStyle(fontSize: 14, color: Colors.white),
+                      SizedBox(height: 8.0),
+                      Text(
+                        'Handle all the placement-related activities here with us.',
+                        style: TextStyle(color: Colors.white),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 40), // Space between the box and title
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: const Text(
-                'For You',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10), // Space between the title and carousel
-            // First Carousel Section
-            Container(
-              height: 230,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
+            SizedBox(height: 16.0),
+
+            // Bottom Grid
+            Flexible(
+              child: GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 4.0,
+                mainAxisSpacing: 8.0,
                 children: [
-                  _buildCarouselItem('Item 1', Colors.red),
-                  _buildCarouselItem('Item 2', Colors.green),
-                  _buildCarouselItem('Item 3', Colors.blue),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30), // Space between carousels
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: const Text(
-                'Upcoming Opportunities',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10), // Space between the title and carousel
-            // Second Carousel Section
-            Container(
-              height: 230,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _buildCarouselItem('Opportunity 1', Colors.orange),
-                  _buildCarouselItem('Opportunity 2', Colors.purple),
-                  _buildCarouselItem('Opportunity 3', Colors.teal),
+                  _buildGridItem(Icons.people, '240', 'Student Database'),
+                  _buildJobsGridItem(),
+                  _buildGridItem(Icons.list, '7', 'Mock Test'),
+                  _buildAlertsGridItem(),
+                  _buildGridItem(Icons.person, '3', 'Placement Officer'),
                 ],
               ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        backgroundColor: Colors.indigo[900],
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey[400],
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.notifications), label: 'Notifications'),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Mock Tests'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.chat_bubble), label: 'Community'),
-        ],
+    );
+  }
+
+  Widget _buildGridItem(IconData icon, String count, String title) {
+    return GestureDetector(
+      onTap: () {
+        // Add navigation logic based on the title
+        if (title == 'Student Database') {
+          // Handle Student Database action
+        } else if (title == 'Mock Test') {
+          // Navigate to Mock Test page
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MockTest(), // Navigate to MockTestPage
+            ),
+          );
+        } else if (title == 'Placement Officer') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PlacementOfficerScreen()),
+          );
+        }
+      },
+      child: Card(
+        elevation: 4,
+        color: Color(0xFFFAF9F6),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Light blue circle
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.lightBlue[100],
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 30.0),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                count,
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 4.0),
+              Text(title),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildCarouselItem(String title, Color color) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 5),
-      width: 200,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
+  Widget _buildJobsGridItem() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => JobsPage(), // Navigate to TPOjobs page
+          ),
+        );
+      },
+      child: Card(
+        elevation: 4,
+        color: Color(0xFFFAF9F6),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.lightBlue[100],
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.work, size: 30.0),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                'Jobs',
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
       ),
-      child: Center(
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+    );
+  }
+
+  Widget _buildAlertsGridItem() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => NotificationPage(),
+          ),
+        );
+      },
+      child: Card(
+        elevation: 4,
+        color: Color(0xFFFAF9F6),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.lightBlue[100],
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.notifications, size: 30.0),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                'Alerts',
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
         ),
       ),
