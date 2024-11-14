@@ -173,6 +173,7 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
           ],
         ),
       ),
+      backgroundColor: Colors.white,
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -182,41 +183,43 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                   const SizedBox(height: 15),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Card(
-                      elevation: 4,
-                      color: const Color(0xFF0A2E4D),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  'Insight drives impact',
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(height: 8.0),
-                                Text(
-                                  'Know the role, know the company,\nmake your mark.',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(width: 10),
-                            Image.asset(
-                              'assets/know_your_job.png',
-                              width: 50,
-                              height: 50,
-                            ),
-                          ],
+                    child: 
+                    Card(
+              elevation: 4,
+              color: Color(0xFF0A2E4D),
+              child: Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Insight drives impact',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
+                        SizedBox(height: 8.0),
+                        Text(
+                          'Know the role, know the company,\nmake your mark.',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
                     ),
+                    // Larger image on the right side
+                    Image.asset(
+                      'assets/know_your_job.png', // Replace with actual image path
+                      width: 80,
+                      height: 80,
+                    ),
+                  ],
+                ),
+              ),
+            ),
                   ),
                   const SizedBox(height: 40),
                   const Padding(

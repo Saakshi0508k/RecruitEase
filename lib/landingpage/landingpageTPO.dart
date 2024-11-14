@@ -58,12 +58,12 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
             // Top Card
             Card(
               elevation: 4,
-              color: Color(0xFF0A2E4D), 
+              color: Color(0xFF0A2E4D),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(30.0),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -80,13 +80,13 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
                           'Handle all the placement\nrelated activities here with us.',
                           style: TextStyle(color: Colors.white),
                         ),
-                        // Image beside the text
+                      ],
+                    ),
+                    // Larger image on the right side
                     Image.asset(
                       'assets/manage_activity.png', // Replace with actual image path
-                      width: 20,
-                      height: 50,
-                    ),
-                      ],
+                      width: 100,
+                      height: 100,
                     ),
                   ],
                 ),
@@ -147,13 +147,21 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 50,
-                height: 50,
+                width: 80,
+                height: 80,
+                padding: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: Colors.lightBlue[100],
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.work, size: 30.0),
+                child: ClipOval(
+                child: Image.asset(
+                  'assets/student_applied.png', // Path to your image
+                  fit: BoxFit.cover,
+                  width: 70,
+                  height: 70,
+                ),
+              ),
               ),
               SizedBox(height: 8.0),
               Text(
@@ -186,13 +194,21 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 50,
-                height: 50,
+                width: 80,
+                height: 80,
+                padding: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: Colors.lightBlue[100],
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.work, size: 30.0),
+                child: ClipOval(
+                child: Image.asset(
+                  'assets/job.png', // Path to your image
+                  fit: BoxFit.cover,
+                  width: 70,
+                  height: 70,
+                ),
+              ),
               ),
               SizedBox(height: 8.0),
               Text(
@@ -225,13 +241,21 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 50,
-                height: 50,
+                width: 80,
+                height: 80,
+                padding: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: Colors.lightBlue[100],
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.work, size: 30.0),
+                child: ClipOval(
+                child: Image.asset(
+                  'assets/test.png', // Path to your image
+                  fit: BoxFit.cover,
+                  width: 70,
+                  height: 70,
+                ),
+              ),
               ),
               SizedBox(height: 8.0),
               Text(
@@ -264,13 +288,21 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 50,
-                height: 50,
+                width: 80,
+                height: 80,
+                padding: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: Colors.lightBlue[100],
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.notifications, size: 30.0),
+                child: ClipOval(
+                child: Image.asset(
+                  'assets/notification.png', // Path to your image
+                  fit: BoxFit.cover,
+                  width: 70,
+                  height: 70,
+                ),
+              ),
               ),
               SizedBox(height: 8.0),
               Text(
@@ -303,13 +335,21 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 50,
-                height: 50,
+                width: 80,
+                height: 80,
+                padding: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: Colors.lightBlue[100],
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.work, size: 30.0),
+                child: ClipOval(
+                child: Image.asset(
+                  'assets/coordinator.png', // Path to your image
+                  fit: BoxFit.cover,
+                  width: 70,
+                  height: 70,
+                ),
+              ),
               ),
               SizedBox(height: 8.0),
               Text(

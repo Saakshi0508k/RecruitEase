@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:recruite_ease/StudentDatabase.dart';
+import 'package:recruite_ease/TPClist.dart';
+import 'package:recruite_ease/mock%20test/mocktest.dart';
 import '/notification/TPOnotification.dart';
-import '/TPClist.dart'; // Import tpclist.dart
-import 'package:recruite_ease/job creation/TPOjobs.dart';
-import 'package:recruite_ease/mock test/mocktest.dart'; // Import the MockTestPage
 
 class LandingPageTeacher extends StatefulWidget {
   const LandingPageTeacher({super.key});
@@ -19,7 +19,33 @@ class _LandingPageTeacherState extends State<LandingPageTeacher> {
         automaticallyImplyLeading: false, // Prevents back arrow
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(''),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(width: 10.0),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Hello',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0D013F),
+                  ),
+                ),
+                Text(
+                  'Teacher',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0D013F),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       backgroundColor: Colors.white,
       body: Padding(
@@ -31,29 +57,50 @@ class _LandingPageTeacherState extends State<LandingPageTeacher> {
             // Top Card
             Card(
               elevation: 4,
-              color: Colors.indigo[900],
+              color: Color(0xFF0A2E4D),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SizedBox(
-                  height: 130,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Manage Activities',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                padding: const EdgeInsets.all(30.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Manage Activities',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(
-                        'Handle all the placement-related activities here with us.',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
+                        SizedBox(height: 8.0),
+                        Text(
+                          'Handle all the placement\nrelated activities here with us.',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                    // Larger image on the right side
+                    Image.asset(
+                      'assets/manage_activity.png', // Replace with actual image path
+                      width: 100,
+                      height: 100,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 16.0),
+            // "Administer" text field
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                'Administer',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
               ),
             ),
@@ -66,11 +113,10 @@ class _LandingPageTeacherState extends State<LandingPageTeacher> {
                 crossAxisSpacing: 4.0,
                 mainAxisSpacing: 8.0,
                 children: [
-                  _buildGridItem(Icons.people, '240', 'Student Database'),
-                  _buildJobsGridItem(),
-                  _buildGridItem(Icons.list, '7', 'Mock Test'),
+                  _buildStudentDbGridItem(),
+                  _buildMockTestGridItem(),
                   _buildAlertsGridItem(),
-                  _buildGridItem(Icons.person, '3', 'Placement Officer'),
+                  _buildCoordinatorGridItem(),
                 ],
               ),
             ),
@@ -79,53 +125,47 @@ class _LandingPageTeacherState extends State<LandingPageTeacher> {
       ),
     );
   }
-
-  Widget _buildGridItem(IconData icon, String count, String title) {
+  
+  Widget _buildStudentDbGridItem() {
     return GestureDetector(
       onTap: () {
-        // Add navigation logic based on the title
-        if (title == 'Student Database') {
-          // Handle Student Database action
-        } else if (title == 'Mock Test') {
-          // Navigate to Mock Test page
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MockTest(), // Navigate to MockTestPage
-            ),
-          );
-        } else if (title == 'Placement Officer') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PlacementOfficerScreen()),
-          );
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StudentDb(), // Navigate to TPOjobs page
+          ),
+        );
       },
       child: Card(
-        elevation: 4,
-        color: Color(0xFFFAF9F6),
+        elevation: 2,
+        color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Light blue circle
               Container(
-                width: 50,
-                height: 50,
+                width: 80,
+                height: 80,
+                padding: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: Colors.lightBlue[100],
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: 30.0),
+                child: ClipOval(
+                child: Image.asset(
+                  'assets/student_applied.png', // Path to your image
+                  fit: BoxFit.cover,
+                  width: 70,
+                  height: 70,
+                ),
+              ),
               ),
               SizedBox(height: 8.0),
               Text(
-                count,
+                'Students',
                 style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 4.0),
-              Text(title),
             ],
           ),
         ),
@@ -133,36 +173,44 @@ class _LandingPageTeacherState extends State<LandingPageTeacher> {
     );
   }
 
-  Widget _buildJobsGridItem() {
+  Widget _buildMockTestGridItem() {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => JobsPage(), // Navigate to TPOjobs page
+            builder: (context) => MockTest(), // Navigate to TPOjobs page
           ),
         );
       },
       child: Card(
-        elevation: 4,
-        color: Color(0xFFFAF9F6),
+        elevation: 2,
+        color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 50,
-                height: 50,
+                width: 80,
+                height: 80,
+                padding: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: Colors.lightBlue[100],
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.work, size: 30.0),
+                child: ClipOval(
+                child: Image.asset(
+                  'assets/test.png', // Path to your image
+                  fit: BoxFit.cover,
+                  width: 70,
+                  height: 70,
+                ),
+              ),
               ),
               SizedBox(height: 8.0),
               Text(
-                'Jobs',
+                'Mock Test',
                 style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
             ],
@@ -183,21 +231,29 @@ class _LandingPageTeacherState extends State<LandingPageTeacher> {
         );
       },
       child: Card(
-        elevation: 4,
-        color: Color(0xFFFAF9F6),
+        elevation: 2,
+        color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 50,
-                height: 50,
+                width: 80,
+                height: 80,
+                padding: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: Colors.lightBlue[100],
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.notifications, size: 30.0),
+                child: ClipOval(
+                child: Image.asset(
+                  'assets/notification.png', // Path to your image
+                  fit: BoxFit.cover,
+                  width: 70,
+                  height: 70,
+                ),
+              ),
               ),
               SizedBox(height: 8.0),
               Text(
@@ -210,4 +266,52 @@ class _LandingPageTeacherState extends State<LandingPageTeacher> {
       ),
     );
   }
+
+  Widget _buildCoordinatorGridItem() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PlacementOfficerScreen(), 
+          ),
+        );
+      },
+      child: Card(
+        elevation: 2,
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                padding: EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Colors.lightBlue[100],
+                  shape: BoxShape.circle,
+                ),
+                child: ClipOval(
+                child: Image.asset(
+                  'assets/coordinator.png', // Path to your image
+                  fit: BoxFit.cover,
+                  width: 70,
+                  height: 70,
+                ),
+              ),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                'Coordinator',
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
 }

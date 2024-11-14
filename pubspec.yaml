@@ -30,7 +30,6 @@ flutter:
     - assets/admin.png
     - assets/teacher.png
     - assets/student.png
-    - assets/student_user.png
     - assets/job.png
     - assets/coordinator.png
     - assets/student_applied.png
