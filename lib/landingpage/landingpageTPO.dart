@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:recruite_ease/StudentDatabase.dart';
+import 'package:recruite_ease/TPClist.dart';
+import 'package:recruite_ease/mock%20test/mocktest.dart';
 import '/notification/TPOnotification.dart';
-import '/TPClist.dart'; // Import tpclist.dart
 import '/job creation/TPOjobs.dart'; // Import TPOjobs.dart
 
 class LandingPageTPO extends StatefulWidget {
@@ -80,7 +82,7 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
                         ),
                         // Image beside the text
                     Image.asset(
-                      'assets/manage_activities.png', // Replace with actual image path
+                      'assets/manage_activity.png', // Replace with actual image path
                       width: 20,
                       height: 50,
                     ),
@@ -112,11 +114,11 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
                 crossAxisSpacing: 4.0,
                 mainAxisSpacing: 8.0,
                 children: [
-                  _buildGridItem(Icons.people, '240', 'Student Database'),
+                  _buildStudentDbGridItem(),
                   _buildJobsGridItem(),
-                  _buildGridItem(Icons.list, '7', 'Mock Test'),
+                  _buildMockTestGridItem(),
                   _buildAlertsGridItem(),
-                  _buildGridItem(Icons.person, '3', 'Placement Coordinator'),
+                  _buildCoordinatorGridItem(),
                 ],
               ),
             ),
@@ -125,21 +127,16 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
       ),
     );
   }
-
-  Widget _buildGridItem(IconData icon, String count, String title) {
+  
+  Widget _buildStudentDbGridItem() {
     return GestureDetector(
       onTap: () {
-        // Add navigation logic based on the title
-        if (title == 'Student Database') {
-          // Handle Student Database action
-        } else if (title == 'Mock Test') {
-          // Handle Mock Test action
-        } else if (title == 'Placement Coordinator') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PlacementOfficerScreen()),
-          );
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StudentDb(), // Navigate to TPOjobs page
+          ),
+        );
       },
       child: Card(
         elevation: 2,
@@ -149,7 +146,6 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Light blue circle
               Container(
                 width: 50,
                 height: 50,
@@ -157,15 +153,13 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
                   color: Colors.lightBlue[100],
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: 30.0),
+                child: Icon(Icons.work, size: 30.0),
               ),
               SizedBox(height: 8.0),
               Text(
-                count,
+                'Students',
                 style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 4.0),
-              Text(title),
             ],
           ),
         ),
@@ -203,6 +197,45 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
               SizedBox(height: 8.0),
               Text(
                 'Jobs',
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMockTestGridItem() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MockTest(), // Navigate to TPOjobs page
+          ),
+        );
+      },
+      child: Card(
+        elevation: 2,
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.lightBlue[100],
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.work, size: 30.0),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                'Mock Test',
                 style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
             ],
@@ -250,4 +283,44 @@ class _LandingPageTPOState extends State<LandingPageTPO> {
       ),
     );
   }
+
+  Widget _buildCoordinatorGridItem() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PlacementOfficerScreen(), 
+          ),
+        );
+      },
+      child: Card(
+        elevation: 2,
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.lightBlue[100],
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.work, size: 30.0),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                'Coordinator',
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
 }

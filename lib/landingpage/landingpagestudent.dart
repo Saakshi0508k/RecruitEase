@@ -19,10 +19,11 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
   late String studentUsername;
   List<Map<String, dynamic>> forYouJobs = [];
   List<Map<String, dynamic>> upcomingOpportunities = [];
+  List<Map<String, dynamic>> leaderboardData = [];
   bool isLoading = true;
+  bool isLeaderboardLoading = true; // Separate loading state for leaderboard
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -30,6 +31,46 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
     studentUsername = widget.studentUsername;
     _fetchStudentData();
     _fetchJobData();
+    fetchLeaderboardData();
+  }
+
+  Future<void> fetchLeaderboardData() async {
+    try {
+      final snapshot = await _firestore
+          .collection('mockTestResults') // Collection with test results
+          .orderBy('score', descending: true) // Sort by score, descending
+          .limit(1) // Limit to the top scorer only
+          .get();
+
+      // Check if any data is returned
+      if (snapshot.docs.isNotEmpty) {
+        final topScorerDoc = snapshot.docs.first.data();
+        setState(() {
+          leaderboardData = [
+            {
+              'testName': topScorerDoc['name'] ??
+                  'N/A', // Assuming 'testName' is stored in the document
+              'username': topScorerDoc['username'] ?? 'Unnamed',
+              'score': topScorerDoc['score'],
+            }
+          ];
+          isLeaderboardLoading = false;
+        });
+
+        print("Leaderboard: $leaderboardData");
+      } else {
+        setState(() {
+          leaderboardData = [];
+          isLeaderboardLoading = false;
+        });
+        print("No leaderboard data found.");
+      }
+    } catch (e) {
+      print("Error fetching leaderboard data: $e");
+      setState(() {
+        isLeaderboardLoading = false; // End loading state on error
+      });
+    }
   }
 
   Future<void> _fetchStudentData() async {
@@ -127,7 +168,7 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
             ),
             CircleAvatar(
               radius: 20,
-              backgroundImage: AssetImage('assets/profile_pic.jpg'),
+              backgroundImage: AssetImage('assets/know_your_job.jpg'),
             ),
           ],
         ),
@@ -168,7 +209,7 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                             ),
                             const SizedBox(width: 10),
                             Image.asset(
-                              'assets/manage_activities.png',
+                              'assets/know_your_job.png',
                               width: 50,
                               height: 50,
                             ),
@@ -229,6 +270,36 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                       }).toList(),
                     ),
                   ),
+                  const SizedBox(height: 30),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(
+                      'Leaderboard',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  isLeaderboardLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : leaderboardData.isEmpty
+                          ? const Text('No leaderboard data available.')
+                          : Column(
+                              children: [
+                                Text(
+                                  'Test: ${leaderboardData[0]['testName']}',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                Text(
+                                  'Top Scorer: ${leaderboardData[0]['username']}',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                Text(
+                                  'Score: ${leaderboardData[0]['score']}',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ],
+                            ),
                 ],
               ),
             ),

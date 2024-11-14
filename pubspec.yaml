@@ -29,3 +29,14 @@ flutter:
   assets:
     - assets/admin.png
     - assets/teacher.png
+    - assets/student.png
+    - assets/student_user.png
+    - assets/job.png
+    - assets/coordinator.png
+    - assets/student_applied.png
+    - assets/notification.png
+    - assets/test.png
+    - assets/manage_activity.png
+    - assets/know_your_job.png
+
+

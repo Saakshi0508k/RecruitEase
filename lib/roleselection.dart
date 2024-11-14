@@ -111,7 +111,7 @@ class RoleSelectionPage extends StatelessWidget {
                       );
                     },
                     child: RoleCard(
-                      imagePath: 'assets/other.png',
+                      imagePath: 'assets/student.png',
                       label: 'Student',
                     ),
                   ),
