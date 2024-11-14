@@ -10,13 +10,14 @@ class MockTest extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFF0A2E4D),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back button
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: const Text('Mock Tests'),
+        title: const Text('Mock Tests', style: TextStyle(color: Colors.white),),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -26,20 +27,21 @@ class MockTest extends StatelessWidget {
             const TextField(
               decoration: InputDecoration(
                 hintText: 'Search',
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: Icon(Icons.search, color: Color(0xFF0A2E4D)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                ),
               ),
             ),
             const SizedBox(height: 16),
             const Text(
               'Test Conducted',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF0A2E4D)),
             ),
             const SizedBox(height: 16),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('mockTests')
-                    .snapshots(),
+                stream: FirebaseFirestore.instance.collection('mockTests').snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
@@ -52,8 +54,7 @@ class MockTest extends StatelessWidget {
                       return MockTestCard(
                         title: mockTest['title'],
                         studentCount: 0, // Placeholder for student count
-                        mockTestId:
-                            mockTest.id, // Pass mockTest ID for navigation
+                        mockTestId: mockTest.id,
                         context: context,
                       );
                     },
@@ -68,12 +69,11 @@ class MockTest extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => const CreateMockTestScreen()),
+            MaterialPageRoute(builder: (context) => const CreateMockTestScreen()),
           );
         },
-        child: const Icon(Icons.add),
-        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add, color: Colors.white),
+        backgroundColor: Color(0xFF0A2E4D),
       ),
     );
   }
@@ -82,7 +82,7 @@ class MockTest extends StatelessWidget {
 class MockTestCard extends StatelessWidget {
   final String title;
   final int studentCount;
-  final String? mockTestId; // Add mockTestId for navigation
+  final String? mockTestId;
   final BuildContext context;
 
   const MockTestCard({
@@ -96,7 +96,6 @@ class MockTestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigate to MockTestDetailPage
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -108,13 +107,13 @@ class MockTestCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
           color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 5,
+              color: Colors.black.withOpacity(0.05),
+              spreadRadius: 3,
+              blurRadius: 6,
               offset: const Offset(0, 3),
             ),
           ],
@@ -125,24 +124,29 @@ class MockTestCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0A2E4D),
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete),
+                  icon: Icon(Icons.delete, color: Colors.redAccent.shade400),
                   onPressed: () {
                     _showDeleteConfirmationDialog(context);
                   },
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                '$studentCount students attended',
-                style: const TextStyle(color: Colors.grey),
-              ),
+            const SizedBox(height: 8),
+            Text(
+              '$studentCount students attended',
+              style: const TextStyle(color: Colors.grey, fontSize: 14),
             ),
           ],
         ),
@@ -156,18 +160,23 @@ class MockTestCard extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Remove Mock'),
-          content: const Text('Are you sure you want to delete this mock?'),
+          content: const Text('Are you sure you want to delete this mock test?'),
           actions: <Widget>[
             TextButton(
-              child: const Text('No'),
+              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Remove Mock'),
+              child: const Text('Delete'),
+              style: TextButton.styleFrom(
+                iconColor: Colors.white,
+                backgroundColor: Colors.redAccent.shade400,
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
+                // Add delete logic here
               },
             ),
           ],

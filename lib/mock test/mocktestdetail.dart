@@ -15,7 +15,14 @@ class MockTestDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mock Test Details'),
+        backgroundColor: Color(0xFF0A2E4D),
+        title: const Text('Mock Test Details', style: TextStyle(color: Colors.white)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back button
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance
@@ -41,6 +48,11 @@ class MockTestDetailPage extends StatelessWidget {
 
               return Card(
                 margin: const EdgeInsets.only(bottom: 16),
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                color: Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -48,7 +60,11 @@ class MockTestDetailPage extends StatelessWidget {
                     children: [
                       Text(
                         'Q${index + 1}. $questionText',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Color(0xFF0A2E4D),
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Column(
@@ -56,14 +72,17 @@ class MockTestDetailPage extends StatelessWidget {
                         children: options.map((option) {
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Text(option),
+                            child: Text(
+                              option,
+                              style: const TextStyle(color: Colors.black87),
+                            ),
                           );
                         }).toList(),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Answer: $answer',
-                        style: const TextStyle(color: Colors.green),
+                        style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),

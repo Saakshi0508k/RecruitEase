@@ -5,12 +5,12 @@ import 'TestResultPage.dart';
 
 class Starttest extends StatefulWidget {
   final String mockTestId;
-  final String studentUsername; // Add this line
+  final String studentUsername;
 
   const Starttest({
     Key? key,
     required this.mockTestId,
-    required this.studentUsername, // Make studentUsername a required parameter
+    required this.studentUsername,
   }) : super(key: key);
 
   @override
@@ -20,9 +20,8 @@ class Starttest extends StatefulWidget {
 class _StarttestState extends State<Starttest> {
   late List<Map<String, dynamic>> questions = [];
   int currentQuestionIndex = 0;
-  late Timer _timer =
-      Timer(Duration.zero, () {}); // Initialize with a dummy timer
-  int _remainingTime = 600; // Default time
+  late Timer _timer = Timer(Duration.zero, () {});
+  int _remainingTime = 600;
   bool isTimeUp = false;
   int totalMarks = 0;
 
@@ -35,7 +34,7 @@ class _StarttestState extends State<Starttest> {
   @override
   void dispose() {
     if (_timer.isActive) {
-      _timer.cancel(); // Cancel timer safely if it's active
+      _timer.cancel();
     }
     super.dispose();
   }
@@ -50,21 +49,19 @@ class _StarttestState extends State<Starttest> {
       if (docSnapshot.exists) {
         var mockTestData = docSnapshot.data();
         if (mockTestData != null) {
-          _remainingTime =
-              mockTestData['duration'] * 60 ?? 600; // Fetch duration in minutes
+          _remainingTime = mockTestData['duration'] * 60 ?? 600;
           var questionsList = mockTestData['questions'] as List<dynamic>;
 
           questions = questionsList.map((questionData) {
             return {
               'questionText': questionData['question'],
               'options': List<String>.from(questionData['options']),
-              'correctAnswer':
-                  questionData['answer'], // Store the correct answer
+              'correctAnswer': questionData['answer'],
               'selectedOption': null,
             };
           }).toList();
 
-          setState(() {}); // Trigger UI update after loading questions
+          setState(() {});
           _startTimer();
         }
       }
@@ -86,7 +83,7 @@ class _StarttestState extends State<Starttest> {
           isTimeUp = true;
         });
         timer.cancel();
-        _submitQuiz(); // Automatically submit when time is up
+        _submitQuiz();
       } else {
         setState(() {
           _remainingTime--;
@@ -99,26 +96,21 @@ class _StarttestState extends State<Starttest> {
     totalMarks = 0;
 
     for (var question in questions) {
-      // Ensure selectedOption is not null and check it against the correct answer
       if (question['selectedOption'] != null) {
         int selectedIndex = question['selectedOption'];
         String selectedAnswer = question['options'][selectedIndex];
 
-        // Compare the selected answer with the correct answer (stored as a string)
         if (selectedAnswer == question['correctAnswer']) {
           totalMarks++;
         }
       }
     }
-
-    print('Total Marks: $totalMarks'); // Debug print to verify the score
   }
 
   Future<void> _submitQuiz() async {
     _calculateScore();
 
     try {
-      // Store the quiz results in Firestore
       await FirebaseFirestore.instance.collection('mockTestResults').add({
         'username': widget.studentUsername,
         'mockTestId': widget.mockTestId,
@@ -135,7 +127,6 @@ class _StarttestState extends State<Starttest> {
         }).toList(),
       });
 
-      // Show the dialog to display the score and navigate on "OK"
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -145,7 +136,7 @@ class _StarttestState extends State<Starttest> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Close the dialog
+                Navigator.pop(context);
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -183,7 +174,14 @@ class _StarttestState extends State<Starttest> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mock Test'),
+        title: const Text('Mock Test',  style: TextStyle(color: Colors.white),),
+        backgroundColor: Color(0xFF0A2E4D),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back button
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -192,12 +190,12 @@ class _StarttestState extends State<Starttest> {
           children: [
             Text(
               'Time Remaining: $minutes:${seconds.toString().padLeft(2, '0')}',
-              style: const TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             Text(
               currentQuestion['questionText'],
-              style: const TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             ...List.generate(currentQuestion['options'].length, (index) {
@@ -210,6 +208,7 @@ class _StarttestState extends State<Starttest> {
                     currentQuestion['selectedOption'] = value;
                   });
                 },
+                activeColor: Color(0xFF0A2E4D),
               );
             }),
             const SizedBox(height: 20),
@@ -217,10 +216,26 @@ class _StarttestState extends State<Starttest> {
                 ? ElevatedButton(
                     onPressed: isTimeUp ? null : _submitQuiz,
                     child: const Text('Submit Quiz'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF0A2E4D),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
                   )
                 : ElevatedButton(
                     onPressed: isTimeUp ? null : _nextQuestion,
                     child: const Text('Next'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF0A2E4D),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
                   ),
           ],
         ),

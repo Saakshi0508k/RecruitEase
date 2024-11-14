@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:recruite_ease/notification/studentnotif.dart';
-import 'package:recruite_ease/mock test/mockteststudent.dart';
+import 'package:recruite_ease/notification/notifications.dart';
+import 'package:recruite_ease/mock%20test/mockteststudent.dart';
 import 'package:recruite_ease/communitychatpage.dart';
 
 class LandingPageStudent extends StatefulWidget {
@@ -22,7 +22,7 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
   List<Map<String, dynamic>> upcomingOpportunities = [];
   List<Map<String, dynamic>> leaderboardData = [];
   bool isLoading = true;
-  bool isLeaderboardLoading = true; // Separate loading state for leaderboard
+  bool isLeaderboardLoading = true;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -38,38 +38,32 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
   Future<void> fetchLeaderboardData() async {
     try {
       final snapshot = await _firestore
-          .collection('mockTestResults') // Collection with test results
-          .orderBy('score', descending: true) // Sort by score, descending
-          .limit(1) // Limit to the top scorer only
+          .collection('mockTestResults')
+          .orderBy('score', descending: true)
+          .limit(1)
           .get();
 
-      // Check if any data is returned
       if (snapshot.docs.isNotEmpty) {
         final topScorerDoc = snapshot.docs.first.data();
         setState(() {
           leaderboardData = [
             {
-              'testName': topScorerDoc['name'] ??
-                  'N/A', // Assuming 'testName' is stored in the document
+              'testName': topScorerDoc['name'] ?? 'N/A',
               'username': topScorerDoc['username'] ?? 'Unnamed',
               'score': topScorerDoc['score'],
             }
           ];
           isLeaderboardLoading = false;
         });
-
-        print("Leaderboard: $leaderboardData");
       } else {
         setState(() {
           leaderboardData = [];
           isLeaderboardLoading = false;
         });
-        print("No leaderboard data found.");
       }
     } catch (e) {
-      print("Error fetching leaderboard data: $e");
       setState(() {
-        isLeaderboardLoading = false; // End loading state on error
+        isLeaderboardLoading = false;
       });
     }
   }
@@ -94,7 +88,6 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
         });
       }
     } catch (e) {
-      print("Error fetching student data: $e");
       setState(() {
         studentName = 'Error fetching name';
         isLoading = false;
@@ -109,20 +102,20 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
       List<Map<String, dynamic>> upcomingOpportunitiesTemp = [];
 
       for (var jobDoc in jobSnapshot.docs) {
-        String jobTitle = jobDoc['jobTitle'] ?? 'No Title';
+        String jobRole = jobDoc['jobRole'] ?? 'No Title';
         String companyName = jobDoc['companyName'] ?? 'No Company';
         String jobLog = jobDoc['jobDescription'] ?? 'No Description';
         String imageUrl = jobDoc['imageUrl'] ?? '';
 
         forYouJobsTemp.add({
-          'title': jobTitle,
+          'title': jobRole,
           'company': companyName,
           'log': jobLog,
           'imageUrl': imageUrl,
         });
 
         upcomingOpportunitiesTemp.add({
-          'title': jobTitle,
+          'title': jobRole,
           'company': companyName,
           'log': jobLog,
           'imageUrl': imageUrl,
@@ -182,194 +175,99 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: 
-                    Card(
-              elevation: 4,
-              color: Color(0xFF0A2E4D),
-              child: Padding(
-                padding: const EdgeInsets.all(30.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Insight drives impact',
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(height: 8.0),
-                        Text(
-                          'Know the role, know the company,\nmake your mark.',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                    // Larger image on the right side
-                    Image.asset(
-                      'assets/know_your_job.png', // Replace with actual image path
-                      width: 80,
-                      height: 80,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-                  ),
+                  _buildHeaderCard(),
                   const SizedBox(height: 40),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      'For You',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87),
-                    ),
-                  ),
+                  _buildSectionTitle('Leaderboard'),
                   const SizedBox(height: 10),
-                  SizedBox(
-                    height: 230,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: forYouJobs.map((job) {
-                        return _buildCarouselItem(
-                          job['title'],
-                          job['company'],
-                          job['log'],
-                          job['imageUrl'],
-                        );
-                      }).toList(),
-                    ),
-                  ),
+                  _buildLeaderboardCard(),
+                  _buildSectionTitle('For You'),
+                  const SizedBox(height: 10),
+                  _buildHorizontalList(forYouJobs),
                   const SizedBox(height: 30),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      'Upcoming Opportunities',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87),
-                    ),
-                  ),
+                  _buildSectionTitle('Upcoming Opportunities'),
                   const SizedBox(height: 10),
-                  SizedBox(
-                    height: 230,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: upcomingOpportunities.map((job) {
-                        return _buildCarouselItem(
-                          job['title'],
-                          job['company'],
-                          job['log'],
-                          job['imageUrl'],
-                        );
-                      }).toList(),
-                    ),
-                  ),
+                  _buildHorizontalList(upcomingOpportunities),
                   const SizedBox(height: 30),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      'Leaderboard',
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  isLeaderboardLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : leaderboardData.isEmpty
-                          ? const Text('No leaderboard data available.')
-                          : Column(
-                              children: [
-                                Text(
-                                  'Test: ${leaderboardData[0]['testName']}',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                Text(
-                                  'Top Scorer: ${leaderboardData[0]['username']}',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                Text(
-                                  'Score: ${leaderboardData[0]['score']}',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ],
-                            ),
+                  
                 ],
               ),
             ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+      bottomNavigationBar: _buildBottomNavBar(),
+    );
+  }
 
-          switch (index) {
-            case 1:
-              // Navigate to StudentNotificationPage when "Notifications" is tapped
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => StudentNotificationPage(),
-                ),
-              );
-              break;
-            case 2:
-              // Navigate to MockTeststudent when "Mock Tests" is tapped
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      MockTeststudent(studentUsername: studentUsername),
-                ),
-              );
-              break;
-            case 3:
-              // Navigate to CommunityChatPage when "Community" is tapped
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      CommunityChatPage(studentUsername: studentUsername),
-                ),
-              );
-              break;
-          }
-        },
-        backgroundColor: const Color(0xFF0A2E4D),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey[400],
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.notifications), label: 'Notifications'),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Mock Tests'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.chat_bubble), label: 'Community'),
-        ],
+  Widget _buildHeaderCard() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Card(
+        elevation: 4,
+        color: Color(0xFF0A2E4D),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Padding(
+          padding: const EdgeInsets.all(30.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    'Insight drives impact',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    'Know the role, know the company,\nmake your mark.',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+              Image.asset(
+                'assets/know_your_job.png',
+                width: 80,
+                height: 80,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildCarouselItem(
+  Widget _buildHorizontalList(List<Map<String, dynamic>> jobs) {
+    return SizedBox(
+      height: 230,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: jobs.map((job) {
+          return _buildJobCard(
+            job['title'],
+            job['company'],
+            job['log'],
+            job['imageUrl'],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildJobCard(
       String title, String company, String log, String imageUrl) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5),
       width: 200,
       decoration: BoxDecoration(
-        color: Colors.blue,
-        borderRadius: BorderRadius.circular(10),
+        color: Color(0xFF0A2E4D),
+        borderRadius: BorderRadius.circular(15),
+        gradient: LinearGradient(
+          colors: [Color.fromARGB(255, 17, 89, 152), Color(0xFF0A2E4D)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -377,31 +275,155 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             imageUrl.isNotEmpty
-                ? Image.network(imageUrl,
-                    height: 100, width: 150, fit: BoxFit.cover)
+                ? Image.network(imageUrl, height: 100, width: 150, fit: BoxFit.cover)
                 : const Icon(Icons.image_not_supported, color: Colors.white),
             const SizedBox(height: 10),
             Text(
               title,
               style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
+                  fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 5),
             Text(
               company,
-              style: const TextStyle(fontSize: 14, color: Colors.white),
+              style: const TextStyle(fontSize: 14, color: Colors.white70),
             ),
             const SizedBox(height: 10),
             Text(
               log,
-              style: const TextStyle(fontSize: 12, color: Colors.white),
+              style: const TextStyle(fontSize: 12, color: Colors.white60),
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLeaderboardCard() {
+  return isLeaderboardLoading
+      ? const Center(child: CircularProgressIndicator())
+      : Center(
+          child: Card(
+            color: Colors.white,
+            elevation: 8,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.85,
+              padding: const EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color.fromARGB(255, 17, 89, 152), Color(0xFF0A2E4D)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 10,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '🏆 Leaderboard 🏆',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Test: ${leaderboardData[0]['testName']}',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Top Scorer: ${leaderboardData[0]['username']}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Score: ${leaderboardData[0]['score']}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+}
+
+  Widget _buildBottomNavBar() {
+    return BottomNavigationBar(
+      currentIndex: _currentIndex,
+      onTap: (index) {
+        setState(() {
+          _currentIndex = index;
+        });
+        switch (index) {
+          case 1:
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => StudentNotificationPage()),
+            );
+            break;
+          case 2:
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MockTeststudent(studentUsername: studentUsername)),
+            );
+            break;
+          case 3:
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CommunityChatPage(studentUsername: studentUsername)),
+            );
+            break;
+        }
+      },
+      backgroundColor: const Color(0xFF0A2E4D),
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.grey[400],
+      type: BottomNavigationBarType.fixed,
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notifications'),
+        BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Mock Tests'),
+        BottomNavigationBarItem(icon: Icon(Icons.chat_bubble), label: 'Community'),
+      ],
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Text(
+        title,
+        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
       ),
     );
   }

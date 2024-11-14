@@ -24,7 +24,6 @@ class _CreateMockTestScreenState extends State<CreateMockTestScreen> {
   @override
   void initState() {
     super.initState();
-    // Add listeners to option controllers to update dropdown when options change
     _option1Controller.addListener(_updateDropdown);
     _option2Controller.addListener(_updateDropdown);
     _option3Controller.addListener(_updateDropdown);
@@ -32,28 +31,19 @@ class _CreateMockTestScreenState extends State<CreateMockTestScreen> {
   }
 
   void _updateDropdown() {
-    // Just rebuild the dropdown items without resetting the selected answer
     setState(() {});
   }
 
   List<DropdownMenuItem<String>> _buildDropdownItems() {
     return [
       if (_option1Controller.text.isNotEmpty)
-        DropdownMenuItem(
-            value: _option1Controller.text,
-            child: Text(_option1Controller.text)),
+        DropdownMenuItem(value: _option1Controller.text, child: Text(_option1Controller.text)),
       if (_option2Controller.text.isNotEmpty)
-        DropdownMenuItem(
-            value: _option2Controller.text,
-            child: Text(_option2Controller.text)),
+        DropdownMenuItem(value: _option2Controller.text, child: Text(_option2Controller.text)),
       if (_option3Controller.text.isNotEmpty)
-        DropdownMenuItem(
-            value: _option3Controller.text,
-            child: Text(_option3Controller.text)),
+        DropdownMenuItem(value: _option3Controller.text, child: Text(_option3Controller.text)),
       if (_option4Controller.text.isNotEmpty)
-        DropdownMenuItem(
-            value: _option4Controller.text,
-            child: Text(_option4Controller.text)),
+        DropdownMenuItem(value: _option4Controller.text, child: Text(_option4Controller.text)),
     ];
   }
 
@@ -64,15 +54,13 @@ class _CreateMockTestScreenState extends State<CreateMockTestScreen> {
         _option3Controller.text.isNotEmpty &&
         _option4Controller.text.isNotEmpty &&
         _selectedAnswer != null) {
-      _questions.add({
-        'question': _questionController.text,
-        'options': [
-          _option1Controller.text,
-          _option2Controller.text,
-          _option3Controller.text,
-          _option4Controller.text,
-        ],
-        'answer': _selectedAnswer,
+      setState(() {
+        _questions.add({
+          'question': _questionController.text,
+          'options': [_option1Controller.text, _option2Controller.text, _option3Controller.text, _option4Controller.text],
+          'answer': _selectedAnswer,
+        });
+        _questionNumber++;
       });
 
       _questionController.clear();
@@ -82,9 +70,7 @@ class _CreateMockTestScreenState extends State<CreateMockTestScreen> {
       _option4Controller.clear();
       _selectedAnswer = null;
 
-      setState(() {
-        _questionNumber++;
-      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Question added successfully!')));
     } else {
       _showErrorDialog();
     }
@@ -96,72 +82,22 @@ class _CreateMockTestScreenState extends State<CreateMockTestScreen> {
         _questions.removeLast();
         _questionNumber--;
       });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Last question removed.')));
     }
   }
 
   void _submitMockTest() async {
-    _showSubmitConfirmationDialog();
-  }
-
-  void _showSubmitConfirmationDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Submit Mock?'),
-          content: const Text('Are you sure you want to add this mock test?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Yes'),
-              onPressed: () async {
-                try {
-                  // Structure the data correctly
-                  await FirebaseFirestore.instance.collection('mockTests').add({
-                    'title': _mockTitleController.text,
-                    'duration': int.parse(_durationController.text),
-                    'createdAt': FieldValue.serverTimestamp(),
-                    'questions': _questions
-                        .map((question) => {
-                              'question':
-                                  question['question'], // Question comes first
-                              'answer': question['answer'], // Answer second
-                              'options': question['options'], // Options last
-                            })
-                        .toList(),
-                  });
-
-                  // Clear fields after successful submission
-                  _mockTitleController.clear();
-                  _durationController.clear();
-                  _questions.clear();
-                  setState(() {
-                    _questionNumber = 1;
-                  });
-
-                  Navigator.of(context).pop(); // Close dialog
-                  Navigator.of(context).pop(); // Navigate back after submission
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Mock test created successfully!')),
-                  );
-                } catch (e) {
-                  Navigator.of(context).pop(); // Close dialog
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to create mock test')),
-                  );
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
+    if (_questions.isNotEmpty && _mockTitleController.text.isNotEmpty && _durationController.text.isNotEmpty) {
+      await FirebaseFirestore.instance.collection('mockTests').add({
+        'title': _mockTitleController.text,
+        'duration': int.parse(_durationController.text),
+        'questions': _questions,
+      });
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Mock test created successfully!')));
+    } else {
+      _showErrorDialog();
+    }
   }
 
   void _showErrorDialog() {
@@ -170,15 +106,9 @@ class _CreateMockTestScreenState extends State<CreateMockTestScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Error'),
-          content: const Text(
-              'Please fill out all fields and select a correct answer before adding the question.'),
+          content: const Text('Please fill out all fields and add at least one question.'),
           actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
+            TextButton(child: const Text('OK'), onPressed: () => Navigator.of(context).pop()),
           ],
         );
       },
@@ -189,18 +119,18 @@ class _CreateMockTestScreenState extends State<CreateMockTestScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+title: Text(
+          'Create Mock Test',
+          style: TextStyle(color: Colors.white), // White text color
+        ),        backgroundColor: Color(0xFF0A2E4D),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back button
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: const Text('Create Mock Test'),
         actions: [
-          TextButton(
-            onPressed: _submitMockTest,
-            child: const Text('Submit'),
-          ),
+          IconButton(icon: Icon(Icons.save, color: Colors.white), onPressed: _submitMockTest),
         ],
       ),
       body: Padding(
@@ -211,99 +141,115 @@ class _CreateMockTestScreenState extends State<CreateMockTestScreen> {
             children: [
               TextField(
                 controller: _mockTitleController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Mock Title',
+                  labelStyle: TextStyle(color: Color(0xFF0A2E4D)),
+                  border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               TextField(
                 controller: _durationController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Duration (in minutes)',
-                  prefixIcon: Icon(Icons.timer),
+                  prefixIcon: Icon(Icons.timer, color: Color(0xFF0A2E4D)),
+                  border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Text(
                 'Question $_questionNumber',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0A2E4D)),
               ),
-              TextField(
-                controller: _questionController,
-                decoration: const InputDecoration(
-                  labelText: 'Question',
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _option1Controller,
-                decoration: const InputDecoration(
-                  labelText: 'Option 1',
-                  prefixIcon: Icon(Icons.radio_button_unchecked),
-                ),
-              ),
-              TextField(
-                controller: _option2Controller,
-                decoration: const InputDecoration(
-                  labelText: 'Option 2',
-                  prefixIcon: Icon(Icons.radio_button_unchecked),
-                ),
-              ),
-              TextField(
-                controller: _option3Controller,
-                decoration: const InputDecoration(
-                  labelText: 'Option 3',
-                  prefixIcon: Icon(Icons.radio_button_unchecked),
-                ),
-              ),
-              TextField(
-                controller: _option4Controller,
-                decoration: const InputDecoration(
-                  labelText: 'Option 4',
-                  prefixIcon: Icon(Icons.radio_button_unchecked),
-                ),
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _selectedAnswer,
-                items: _buildDropdownItems(),
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedAnswer = newValue;
-                  });
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Correct Answer',
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: _addQuestion,
-                    child: const Text('Add Question'),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: _removeLastQuestion,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
+              SizedBox(height: 8),
+              _buildQuestionCard(),
               if (_questions.isNotEmpty)
-                Column(
-                  children: _questions.map((question) {
-                    return ListTile(
-                      title: Text(question['question']),
-                      subtitle: Text(
-                          'Options: ${question['options'].join(", ")} | Answer: ${question['answer']}'),
-                    );
-                  }).toList(),
-                ),
+                ..._questions.map((question) => _buildSavedQuestionCard(question)).toList(),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuestionCard() {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _questionController,
+              decoration: InputDecoration(
+                labelText: 'Question',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 8),
+            _buildOptionField(_option1Controller, 'Option 1'),
+            _buildOptionField(_option2Controller, 'Option 2'),
+            _buildOptionField(_option3Controller, 'Option 3'),
+            _buildOptionField(_option4Controller, 'Option 4'),
+            DropdownButtonFormField<String>(
+              value: _selectedAnswer,
+              items: _buildDropdownItems(),
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedAnswer = newValue;
+                });
+              },
+              decoration: InputDecoration(labelText: 'Correct Answer'),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: _addQuestion,
+                  child: Text('Add Question', style: TextStyle(color: Colors.white),),
+                  style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF0A2E4D)),
+                ),
+                TextButton(
+                  onPressed: _removeLastQuestion,
+                  child: const Text('Remove Last'),
+                  style: TextButton.styleFrom(iconColor: Colors.red),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptionField(TextEditingController controller, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(Icons.radio_button_unchecked, color: Color(0xFF0A2E4D)),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSavedQuestionCard(Map<String, dynamic> question) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      color: Color(0xFF0A2E4D).withOpacity(0.05),
+      child: ListTile(
+        title: Text(question['question'], style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0A2E4D))),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Options: ${question['options'].join(", ")}', style: TextStyle(color: Color(0xFF0A2E4D))),
+            Text('Answer: ${question['answer']}', style: TextStyle(color: Color(0xFF0A2E4D))),
+          ],
         ),
       ),
     );

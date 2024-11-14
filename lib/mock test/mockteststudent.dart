@@ -13,12 +13,13 @@ class MockTeststudent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back button
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: const Text('Mock Tests'),
+        title: const Text('Mock Tests', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xFF0A2E4D),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -29,12 +30,13 @@ class MockTeststudent extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: 'Search',
                 prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16),
             const Text(
               'Test Conducted',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF0A2E4D)),
             ),
             const SizedBox(height: 16),
             Expanded(
@@ -54,10 +56,8 @@ class MockTeststudent extends StatelessWidget {
                       return MockTestCard(
                         title: mockTest['title'],
                         studentCount: 0, // Placeholder for student count
-                        mockTestId:
-                            mockTest.id, // Pass mockTest ID for navigation
-                        studentUsername:
-                            studentUsername, // Pass studentUsername
+                        mockTestId: mockTest.id, // Pass mockTest ID for navigation
+                        studentUsername: studentUsername, // Pass studentUsername
                       );
                     },
                   );
@@ -93,8 +93,7 @@ class MockTestCard extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => Starttest(
               mockTestId: mockTestId,
-              studentUsername:
-                  studentUsername, // Pass studentUsername to Starttest
+              studentUsername: studentUsername, // Pass studentUsername to Starttest
             ),
           ),
         );
@@ -103,7 +102,7 @@ class MockTestCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
           color: Colors.white,
           boxShadow: [
             BoxShadow(
@@ -117,14 +116,13 @@ class MockTestCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
+            Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Color(0xFF0A2E4D),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -141,13 +139,20 @@ class MockTestCard extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => Starttest(
                       mockTestId: mockTestId,
-                      studentUsername:
-                          studentUsername, // Pass studentUsername here as well
+                      studentUsername: studentUsername, // Pass studentUsername here as well
                     ),
                   ),
                 );
               },
               child: const Text('Start Quiz'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF0A2E4D),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
             ),
           ],
         ),
