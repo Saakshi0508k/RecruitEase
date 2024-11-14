@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:recruite_ease/notification/studentnotif.dart';
 import 'package:recruite_ease/mock test/mockteststudent.dart';
+import 'package:recruite_ease/communitychatpage.dart';
 
 class LandingPageStudent extends StatefulWidget {
   final String studentUsername;
@@ -310,23 +311,36 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
             _currentIndex = index;
           });
 
-          if (index == 1) {
-            // Navigate to StudentNotificationPage when "Notifications" is tapped
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => StudentNotificationPage(),
-              ),
-            );
-          } else if (index == 2) {
-            // Navigate to MockTeststudent when "Mock Tests" is tapped
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    MockTeststudent(studentUsername: studentUsername),
-              ),
-            );
+          switch (index) {
+            case 1:
+              // Navigate to StudentNotificationPage when "Notifications" is tapped
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => StudentNotificationPage(),
+                ),
+              );
+              break;
+            case 2:
+              // Navigate to MockTeststudent when "Mock Tests" is tapped
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      MockTeststudent(studentUsername: studentUsername),
+                ),
+              );
+              break;
+            case 3:
+              // Navigate to CommunityChatPage when "Community" is tapped
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      CommunityChatPage(studentUsername: studentUsername),
+                ),
+              );
+              break;
           }
         },
         backgroundColor: const Color(0xFF0A2E4D),
