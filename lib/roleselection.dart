@@ -90,7 +90,7 @@ class RoleSelectionPage extends StatelessWidget {
                           );
                         },
                         child: RoleCard(
-                          imagePath: 'assets/student.png',
+                          imagePath: 'assets/admin.png',
                           label: 'TPO',
                         ),
                       ),
