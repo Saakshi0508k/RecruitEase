@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'TestResultPage.dart';
 
 class Starttest extends StatefulWidget {
   final String mockTestId;
@@ -117,29 +118,24 @@ class _StarttestState extends State<Starttest> {
     _calculateScore();
 
     try {
-      // Ensure username and score are valid before submitting
-      print('Submitting quiz for user: ${widget.studentUsername}');
-      print('Score: $totalMarks');
-
-      // Store student answers, username, and total marks in Firestore
+      // Store the quiz results in Firestore
       await FirebaseFirestore.instance.collection('mockTestResults').add({
-        'username': widget.studentUsername, // Ensure username is not empty
+        'username': widget.studentUsername,
         'mockTestId': widget.mockTestId,
         'submittedAt': FieldValue.serverTimestamp(),
-        'score': totalMarks, // Ensure score is calculated correctly
+        'score': totalMarks,
         'answers': questions.map((question) {
           return {
             'questionText': question['questionText'],
             'selectedOption': question['selectedOption'] != null
                 ? question['options'][question['selectedOption']]
                 : null,
+            'correctAnswer': question['correctAnswer'],
           };
         }).toList(),
       });
-      print('Username: ${widget.studentUsername}');
-      print('Score: $totalMarks');
 
-      // Show a dialog to display the score
+      // Show the dialog to display the score and navigate on "OK"
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -150,9 +146,18 @@ class _StarttestState extends State<Starttest> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // Close the dialog
-                Navigator.pop(context); // Navigate back to the previous screen
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TestResultPage(
+                      score: totalMarks,
+                      answers: questions,
+                      totalQuestions: questions.length,
+                    ),
+                  ),
+                );
               },
-              child: const Text('OK'),
+              child: const Text('View'),
             ),
           ],
         ),
