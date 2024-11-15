@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:recruite_ease/notification/notifications.dart';
 import 'package:recruite_ease/mock%20test/mockteststudent.dart';
 import 'package:recruite_ease/communitychatpage.dart';
+import 'leaderboard.dart';
 
 class LandingPageStudent extends StatefulWidget {
   final String studentUsername;
@@ -45,12 +46,24 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
 
       if (snapshot.docs.isNotEmpty) {
         final topScorerDoc = snapshot.docs.first.data();
+
+        // Get the total number of questions from the answers array length
+        final totalQuestions = topScorerDoc['answers']?.length ??
+            0; // Total questions based on answers
+
+        // Get the score from the result
+        final score = topScorerDoc['score'] ?? 0;
+
+        // Calculate the score as score/totalQuestions
+        final scoreDisplay =
+            totalQuestions > 0 ? '$score/$totalQuestions' : 'N/A';
+
         setState(() {
           leaderboardData = [
             {
-              'testName': topScorerDoc['name'] ?? 'N/A',
+              'testName': topScorerDoc['title'] ?? 'N/A',
               'username': topScorerDoc['username'] ?? 'Unnamed',
-              'score': topScorerDoc['score'],
+              'score': scoreDisplay, // Display score as score/totalQuestions
             }
           ];
           isLeaderboardLoading = false;
@@ -177,7 +190,30 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                   const SizedBox(height: 15),
                   _buildHeaderCard(),
                   const SizedBox(height: 40),
-                  _buildSectionTitle('Leaderboard'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment
+                        .spaceBetween, // Adjust space between elements
+                    children: [
+                      _buildSectionTitle('Leaderboard'),
+                      TextButton(
+                        onPressed: () {
+                          // Navigate to LeaderboardPage when "View All" is clicked
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LeaderboardPage()),
+                          );
+                        },
+                        child: Text(
+                          'View All',
+                          style: TextStyle(
+                            color: Colors.blue, // You can customize the color
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 10),
                   _buildLeaderboardCard(),
                   _buildSectionTitle('For You'),
@@ -188,7 +224,6 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                   const SizedBox(height: 10),
                   _buildHorizontalList(upcomingOpportunities),
                   const SizedBox(height: 30),
-                  
                 ],
               ),
             ),
@@ -275,13 +310,16 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             imageUrl.isNotEmpty
-                ? Image.network(imageUrl, height: 100, width: 150, fit: BoxFit.cover)
+                ? Image.network(imageUrl,
+                    height: 100, width: 150, fit: BoxFit.cover)
                 : const Icon(Icons.image_not_supported, color: Colors.white),
             const SizedBox(height: 10),
             Text(
               title,
               style: const TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
             ),
             const SizedBox(height: 5),
             Text(
@@ -302,80 +340,83 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
   }
 
   Widget _buildLeaderboardCard() {
-  return isLeaderboardLoading
-      ? const Center(child: CircularProgressIndicator())
-      : Center(
-          child: Card(
-            color: Colors.white,
-            elevation: 8,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.85,
-              padding: const EdgeInsets.all(20.0),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color.fromARGB(255, 17, 89, 152), Color(0xFF0A2E4D)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+    return isLeaderboardLoading
+        ? const Center(child: CircularProgressIndicator())
+        : Center(
+            child: Card(
+              color: Colors.white,
+              elevation: 8,
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 10,
-                    offset: Offset(0, 3),
-                  ),
-                ],
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    '🏆 Leaderboard 🏆',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.85,
+                padding: const EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 17, 89, 152),
+                      Color(0xFF0A2E4D)
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Test: ${leaderboardData[0]['testName']}',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 10,
+                      offset: Offset(0, 3),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Top Scorer: ${leaderboardData[0]['username']}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      '🏆 Leaderboard 🏆',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Score: ${leaderboardData[0]['score']}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
+                    const SizedBox(height: 20),
+                    Text(
+                      'Test: ${leaderboardData[0]['testName']}',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    Text(
+                      'Top Scorer: ${leaderboardData[0]['username']}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Score: ${leaderboardData[0]['score']}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-}
+          );
+  }
 
   Widget _buildBottomNavBar() {
     return BottomNavigationBar(
@@ -388,19 +429,24 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
           case 1:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => StudentNotificationPage()),
+              MaterialPageRoute(
+                  builder: (context) => StudentNotificationPage()),
             );
             break;
           case 2:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MockTeststudent(studentUsername: studentUsername)),
+              MaterialPageRoute(
+                  builder: (context) =>
+                      MockTeststudent(studentUsername: studentUsername)),
             );
             break;
           case 3:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => CommunityChatPage(studentUsername: studentUsername)),
+              MaterialPageRoute(
+                  builder: (context) =>
+                      CommunityChatPage(studentUsername: studentUsername)),
             );
             break;
         }
@@ -411,9 +457,11 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
       type: BottomNavigationBarType.fixed,
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notifications'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.notifications), label: 'Notifications'),
         BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Mock Tests'),
-        BottomNavigationBarItem(icon: Icon(Icons.chat_bubble), label: 'Community'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble), label: 'Community'),
       ],
     );
   }
@@ -423,7 +471,8 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Text(
         title,
-        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+        style: const TextStyle(
+            fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
       ),
     );
   }

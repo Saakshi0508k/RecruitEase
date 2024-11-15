@@ -18,10 +18,11 @@ class Starttest extends StatefulWidget {
 }
 
 class _StarttestState extends State<Starttest> {
+  late String title = ""; // Initialize with an empty string
   late List<Map<String, dynamic>> questions = [];
   int currentQuestionIndex = 0;
-  late Timer _timer = Timer(Duration.zero, () {});
-  int _remainingTime = 600;
+  late Timer _timer = Timer(Duration.zero, () {}); // Default empty timer
+  int _remainingTime = 600; // 10 minutes in seconds
   bool isTimeUp = false;
   int totalMarks = 0;
 
@@ -51,6 +52,7 @@ class _StarttestState extends State<Starttest> {
         if (mockTestData != null) {
           _remainingTime = mockTestData['duration'] * 60 ?? 600;
           var questionsList = mockTestData['questions'] as List<dynamic>;
+          title = mockTestData['title'] ?? "Untitled Test";
 
           questions = questionsList.map((questionData) {
             return {
@@ -112,6 +114,7 @@ class _StarttestState extends State<Starttest> {
 
     try {
       await FirebaseFirestore.instance.collection('mockTestResults').add({
+        'title': title,
         'username': widget.studentUsername,
         'mockTestId': widget.mockTestId,
         'submittedAt': FieldValue.serverTimestamp(),
@@ -174,10 +177,14 @@ class _StarttestState extends State<Starttest> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mock Test',  style: TextStyle(color: Colors.white),),
+        title: const Text(
+          'Mock Test',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Color(0xFF0A2E4D),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back button
+          icon: const Icon(Icons.arrow_back,
+              color: Colors.white), // White back button
           onPressed: () {
             Navigator.pop(context);
           },
