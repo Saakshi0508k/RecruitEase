@@ -8,7 +8,7 @@ class LeaderboardPage extends StatefulWidget {
 
 class _LeaderboardPageState extends State<LeaderboardPage> {
   List<Map<String, dynamic>> leaderboardData = [];
-  bool isLeaderboardLoading = true; // Track the loading state
+  bool isLeaderboardLoading = true;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -20,56 +20,42 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
 
   Future<void> fetchLeaderboardData() async {
     try {
-      final snapshot = await _firestore
-          .collection('mockTestResults')
-          .get(); // Get all the results
+      final snapshot = await _firestore.collection('mockTestResults').get();
 
       if (snapshot.docs.isNotEmpty) {
         Map<String, Map<String, dynamic>> topScorers = {};
 
-        // Loop through all the documents to process the top scorer for each test
         snapshot.docs.forEach((doc) {
-          final topScorerDoc = doc.data();
-          final testName =
-              topScorerDoc['title'] ?? 'N/A'; // Null-aware operator
-          final score =
-              topScorerDoc['score'] ?? 0; // Default to 0 if score is null
-          final answers =
-              topScorerDoc['answers'] as List?; // Safely cast to List
-          final totalQuestions =
-              answers?.length ?? 0; // Safely get length or 0 if answers is null
+          final data = doc.data();
+          final testName = data['title'] ?? 'N/A';
+          final score = data['score'] ?? 0;
+          final answers = data['answers'] as List?;
+          final totalQuestions = answers?.length ?? 0;
           final scoreDisplay =
               totalQuestions > 0 ? '$score/$totalQuestions' : 'N/A';
-          final username = topScorerDoc['username'] ??
-              'Unnamed'; // Default to 'Unnamed' if null
+          final username = data['username'] ?? 'Unnamed';
 
-          // Check if this test already has a top scorer, if so, compare scores
+          // Check if test already exists, if not add or update if score is higher
           if (!topScorers.containsKey(testName)) {
             topScorers[testName] = {
               'testName': testName,
               'username': username,
-              'score': score, // Store raw score here
-              'scoreDisplay': scoreDisplay, // Display score when needed
+              'score': score,
+              'scoreDisplay': scoreDisplay,
             };
-          } else {
-            // Update top scorer if the current score is higher
-            final currentTopScorer = topScorers[testName];
-            if (score > currentTopScorer!['score']) {
-              // Compare raw score
-              topScorers[testName] = {
-                'testName': testName,
-                'username': username,
-                'score': score, // Store raw score
-                'scoreDisplay': scoreDisplay, // Update display score
-              };
-            }
+          } else if (score > topScorers[testName]!['score']) {
+            topScorers[testName] = {
+              'testName': testName,
+              'username': username,
+              'score': score,
+              'scoreDisplay': scoreDisplay,
+            };
           }
         });
 
-        // Convert the map of top scorers into a list
         setState(() {
           leaderboardData = topScorers.values.toList();
-          isLeaderboardLoading = false; // Set loading to false
+          isLeaderboardLoading = false;
         });
       } else {
         setState(() {
@@ -89,22 +75,88 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Leaderboard"),
+        title: const Text(
+          "Leaderboard",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Color(0xFF0A2E4D),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back button
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        elevation: 0,
       ),
       body: isLeaderboardLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : leaderboardData.isEmpty
-              ? Center(child: Text("No leaderboard data available"))
+              ? const Center(
+                  child: Text(
+                    "No leaderboard data available",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF0A2E4D),
+                    ),
+                  ),
+                )
               : ListView.builder(
+                  padding: const EdgeInsets.all(10),
                   itemCount: leaderboardData.length,
                   itemBuilder: (context, index) {
-                    final leaderboardItem = leaderboardData[index];
-                    return ListTile(
-                      title: Text(leaderboardItem['testName']),
-                      subtitle:
-                          Text('Username: ${leaderboardItem['username']}'),
-                      trailing:
-                          Text('Score: ${leaderboardItem['scoreDisplay']}'),
+                    // Ensure the index is valid
+                    if (index >= leaderboardData.length) {
+                      return const Center(child: Text("No data available"));
+                    }
+
+                    final item = leaderboardData[index];
+                    return Card(
+                      elevation: 5,
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Color(0xFF0A2E4D),
+                              Color.fromARGB(255, 17, 89, 152),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          title: Text(
+                            item['testName'] ?? 'Test Name Unavailable',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          subtitle: Text(
+                            'Username: ${item['username'] ?? 'N/A'}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.white70,
+                            ),
+                          ),
+                          trailing: Text(
+                            item['scoreDisplay'] ?? 'N/A',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
                     );
                   },
                 ),

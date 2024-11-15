@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:recruite_ease/notification/notifications.dart';
@@ -150,7 +151,7 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 2,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -175,7 +176,7 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
             ),
             CircleAvatar(
               radius: 20,
-              backgroundImage: AssetImage('assets/know_your_job.jpg'),
+              backgroundColor: Colors.blue[200],
             ),
           ],
         ),
@@ -191,13 +192,11 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                   _buildHeaderCard(),
                   const SizedBox(height: 40),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment
-                        .spaceBetween, // Adjust space between elements
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       _buildSectionTitle('Leaderboard'),
                       TextButton(
                         onPressed: () {
-                          // Navigate to LeaderboardPage when "View All" is clicked
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -207,7 +206,7 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                         child: Text(
                           'View All',
                           style: TextStyle(
-                            color: Colors.blue, // You can customize the color
+                            color: Colors.blue,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -216,6 +215,20 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                   ),
                   const SizedBox(height: 10),
                   _buildLeaderboardCard(),
+                  const SizedBox(height: 20),
+
+                  // Scrollable Chart Cards Section
+                  _buildSectionTitle('Placement Statistics'),
+                  SizedBox(
+          height: 250, // Fixed height for charts
+          child: PageView(
+            children: [
+              _buildBarChart(),
+              _buildDoughnutChart(),
+            ],
+          ),
+        ),
+                  const SizedBox(height: 30),
                   _buildSectionTitle('For You'),
                   const SizedBox(height: 10),
                   _buildHorizontalList(forYouJobs),
@@ -272,6 +285,76 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
       ),
     );
   }
+
+  Widget _buildBarChart() {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.all(16.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: BarChart(
+  BarChartData(
+    titlesData: FlTitlesData(
+      leftTitles: SideTitles(showTitles: true),
+      bottomTitles: SideTitles(
+        showTitles: true,
+        getTitles: (double value) {
+          switch (value.toInt()) {
+            case 1:
+              return 'Barclays';
+            case 2:
+              return 'Carwale';
+            case 3:
+              return 'GM';
+            default:
+              return '';
+          }
+        },
+      ),
+    ),
+    borderData: FlBorderData(show: false),
+    barGroups: [
+      BarChartGroupData(
+        x: 1,
+        barRods: [BarChartRodData(y: 5, colors: [Colors.blue])],
+      ),
+      BarChartGroupData(
+        x: 2,
+        barRods: [BarChartRodData(y: 6, colors: [Colors.green])],
+      ),
+      BarChartGroupData(
+        x: 3,
+        barRods: [BarChartRodData(y: 2, colors: [Colors.orange])],
+      ),
+    ],
+  ),
+),
+
+      ),
+    );
+  }
+
+  Widget _buildDoughnutChart() {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.all(16.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: PieChart(
+          PieChartData(
+            sections: [
+              PieChartSectionData(value: 50, color: Colors.blue, title: 'Comps'),
+              PieChartSectionData(value: 30, color: Colors.green, title: 'ECS'),
+              PieChartSectionData(value: 10, color: Colors.orange, title: 'AIDS'),
+              PieChartSectionData(value: 20, color: Colors.pink, title: 'Mech'),
+
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
 
   Widget _buildHorizontalList(List<Map<String, dynamic>> jobs) {
     return SizedBox(
@@ -344,45 +427,28 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
         ? const Center(child: CircularProgressIndicator())
         : Center(
             child: Card(
-              color: Colors.white,
-              elevation: 8,
+              elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Container(
+                decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Color(0xFF0A2E4D),
+                              Color.fromARGB(255, 17, 89, 152),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                 width: MediaQuery.of(context).size.width * 0.85,
                 padding: const EdgeInsets.all(20.0),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color.fromARGB(255, 17, 89, 152),
-                      Color(0xFF0A2E4D)
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 5,
-                      blurRadius: 10,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
+                
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      '🏆 Leaderboard 🏆',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
                     Text(
                       'Test: ${leaderboardData[0]['testName']}',
                       style: TextStyle(
