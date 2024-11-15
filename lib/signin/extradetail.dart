@@ -27,12 +27,7 @@ class _ExtraDetailsPageState extends State<ExtraDetailsPage> {
   String? _resumeUrl; // Variable to store the resume URL
 
   // Department, Class and Year lists
-  final List<String> departments = [
-    'Computer',
-    'Electronics',
-    'Artificial Intelligence and Data Science',
-    'Mechanical'
-  ];
+  final List<String> departments = ['Computer', 'ECS', 'AI-DS', 'Mechanical'];
 
   final List<String> classes = ['SE', 'TE', 'BE'];
 

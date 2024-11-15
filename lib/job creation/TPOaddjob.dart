@@ -13,6 +13,9 @@ class AddJobPage extends StatefulWidget {
 
 class _AddJobPageState extends State<AddJobPage> {
   final _formKey = GlobalKey<FormState>();
+  final List<String> _departments = ['Computer', 'AI-DS', 'ECS', 'Mechanical'];
+  List<String> _selectedDepartments = [];
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
@@ -67,6 +70,7 @@ class _AddJobPageState extends State<AddJobPage> {
           'jobDescription': _jobDescription,
           'jobRole': _jobRole,
           'skills': _skills,
+          'departments': _selectedDepartments, // Save selected departments
           'imageUrl': imageUrl,
           'createdAt': Timestamp.now(),
         });
@@ -121,25 +125,54 @@ class _AddJobPageState extends State<AddJobPage> {
                       )
                     else
                       IconButton(
-                        icon: Icon(Icons.add_a_photo, color: Colors.grey[600], size: 40),
+                        icon: Icon(Icons.add_a_photo,
+                            color: Colors.grey[600], size: 40),
                         onPressed: _uploadImage,
                       ),
                     const SizedBox(height: 16.0),
-                    _buildDoubleField('Criteria', Icons.circle_notifications_rounded, (value) => _Criteria = value),
-                    _buildTextField('Company Name', Icons.business, (value) => _companyName = value),
-                    _buildTextField('City', Icons.location_city, (value) => _city = value),
-                    _buildNumberField('Salary', Icons.attach_money, (value) => _salary = int.parse(value)),
+                    _buildDoubleField(
+                        'Criteria',
+                        Icons.circle_notifications_rounded,
+                        (value) => _Criteria = value),
+                    const Text('Department', style: TextStyle(fontSize: 16)),
+                    ..._departments.map((department) {
+                      return CheckboxListTile(
+                        title: Text(department),
+                        value: _selectedDepartments.contains(department),
+                        onChanged: (bool? value) {
+                          setState(() {
+                            if (value == true) {
+                              _selectedDepartments.add(department);
+                            } else {
+                              _selectedDepartments.remove(department);
+                            }
+                          });
+                        },
+                      );
+                    }).toList(),
+                    _buildTextField('Company Name', Icons.business,
+                        (value) => _companyName = value),
+                    _buildTextField(
+                        'City', Icons.location_city, (value) => _city = value),
+                    _buildNumberField('Salary', Icons.attach_money,
+                        (value) => _salary = int.parse(value)),
                     _buildDropdownField(),
-                    _buildTextField('Job Role', Icons.work, (value) => _jobRole = value),
-                    _buildTextField('Skills (comma separated)', Icons.code, (value) => _skills = value),
-                    _buildTextField('Job Description', Icons.description, (value) => _jobDescription = value, maxLines: 4),
+                    _buildTextField(
+                        'Job Role', Icons.work, (value) => _jobRole = value),
+                    _buildTextField('Skills (comma separated)', Icons.code,
+                        (value) => _skills = value),
+                    _buildTextField('Job Description', Icons.description,
+                        (value) => _jobDescription = value,
+                        maxLines: 4),
                     const SizedBox(height: 20.0),
                     ElevatedButton.icon(
                       onPressed: _saveJob,
-                      label: const Text('Save Job', style: TextStyle(color: Colors.white)),
+                      label: const Text('Save Job',
+                          style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF0A2E4D),
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
@@ -156,7 +189,9 @@ class _AddJobPageState extends State<AddJobPage> {
     );
   }
 
-  Widget _buildTextField(String label, IconData icon, ValueChanged<String> onChanged, {int maxLines = 1}) {
+  Widget _buildTextField(
+      String label, IconData icon, ValueChanged<String> onChanged,
+      {int maxLines = 1}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
@@ -170,13 +205,15 @@ class _AddJobPageState extends State<AddJobPage> {
           fillColor: Colors.grey[100],
         ),
         maxLines: maxLines,
-        validator: (value) => value == null || value.isEmpty ? 'Please enter $label' : null,
+        validator: (value) =>
+            value == null || value.isEmpty ? 'Please enter $label' : null,
         onChanged: onChanged,
       ),
     );
   }
 
-  Widget _buildDoubleField(String label, IconData icon, ValueChanged<double> onChanged) {
+  Widget _buildDoubleField(
+      String label, IconData icon, ValueChanged<double> onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
@@ -192,7 +229,8 @@ class _AddJobPageState extends State<AddJobPage> {
         keyboardType: TextInputType.numberWithOptions(decimal: true),
         validator: (value) {
           if (value == null || value.isEmpty) return 'Please enter $label';
-          if (double.tryParse(value) == null) return 'Please enter a valid number';
+          if (double.tryParse(value) == null)
+            return 'Please enter a valid number';
           return null;
         },
         onChanged: (value) => onChanged(double.tryParse(value) ?? 0.0),
@@ -200,7 +238,8 @@ class _AddJobPageState extends State<AddJobPage> {
     );
   }
 
-  Widget _buildNumberField(String label, IconData icon, ValueChanged<String> onChanged) {
+  Widget _buildNumberField(
+      String label, IconData icon, ValueChanged<String> onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(

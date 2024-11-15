@@ -21,7 +21,8 @@ class _JobsPageState extends State<JobsPage> {
         ),
         backgroundColor: Color(0xFF0A2E4D),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back button
+          icon: const Icon(Icons.arrow_back,
+              color: Colors.white), // White back button
           onPressed: () {
             Navigator.pop(context);
           },
@@ -50,7 +51,8 @@ class _JobsPageState extends State<JobsPage> {
             // Job List using StreamBuilder
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collection('jobs').snapshots(),
+                stream:
+                    FirebaseFirestore.instance.collection('jobs').snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -62,16 +64,20 @@ class _JobsPageState extends State<JobsPage> {
                   final jobs = snapshot.data!.docs.map((doc) {
                     return Job(
                       jobId: doc.id,
-                      Criteria: (doc['Criteria'] as num?)?.toDouble() ?? 0.0, // Ensure Criteria is double
+                      Criteria: (doc['Criteria'] as num?)?.toDouble() ?? 0.0,
                       company: doc['companyName'] ?? '',
                       logoUrl: doc['imageUrl'] ?? '',
                       jobRole: doc['jobRole'] ?? '',
                       jobType: doc['jobType'] ?? '',
                       salary: doc['salary'] ?? 0,
                       skills: List<String>.from(
-                        (doc['skills'] is List) ? doc['skills'] : [doc['skills'] ?? ''],
+                        (doc['skills'] is List)
+                            ? doc['skills']
+                            : [doc['skills'] ?? ''],
                       ),
                       jobDescription: doc['jobDescription'] ?? '',
+                      departments: List<String>.from(
+                          doc['departments'] ?? []), // Add department field
                     );
                   }).toList();
 
@@ -93,6 +99,8 @@ class _JobsPageState extends State<JobsPage> {
                                 salary: jobs[index].salary,
                                 skills: jobs[index].skills,
                                 jobDescription: jobs[index].jobDescription,
+                                departments: jobs[index]
+                                    .departments, // Pass department here
                               ),
                             ),
                           );
@@ -107,6 +115,8 @@ class _JobsPageState extends State<JobsPage> {
                           salary: jobs[index].salary,
                           skills: jobs[index].skills,
                           jobDescription: jobs[index].jobDescription,
+                          departments:
+                              jobs[index].departments, // Pass department here
                         ),
                       );
                     },
@@ -128,11 +138,13 @@ class _JobsPageState extends State<JobsPage> {
         },
         backgroundColor: Color(0xFF0A2E4D), // Set button color
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12), // Square shape with rounded corners
+          borderRadius:
+              BorderRadius.circular(12), // Square shape with rounded corners
         ),
         child: const Icon(Icons.add, color: Colors.white),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat, // Align to bottom-right
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.endFloat, // Align to bottom-right
     );
   }
 }
@@ -140,7 +152,7 @@ class _JobsPageState extends State<JobsPage> {
 // Updated Job and JobCard classes to handle Criteria as double
 class Job {
   final String jobId;
-  final double Criteria; // Changed to double
+  final double Criteria;
   final String company;
   final String logoUrl;
   final String jobRole;
@@ -148,6 +160,7 @@ class Job {
   final int salary;
   final List<String> skills;
   final String jobDescription;
+  final List<String> departments; // Add department field
 
   const Job({
     required this.jobId,
@@ -159,12 +172,13 @@ class Job {
     required this.salary,
     required this.skills,
     required this.jobDescription,
+    required this.departments, // Add department in constructor
   });
 }
 
 class JobCard extends StatelessWidget {
   final String jobId;
-  final double Criteria; // Changed to double
+  final double Criteria;
   final String company;
   final String logoUrl;
   final String jobRole;
@@ -172,6 +186,7 @@ class JobCard extends StatelessWidget {
   final int salary;
   final List<String> skills;
   final String jobDescription;
+  final List<String> departments; // Add department field
 
   const JobCard({
     super.key,
@@ -184,6 +199,7 @@ class JobCard extends StatelessWidget {
     required this.salary,
     required this.skills,
     required this.jobDescription,
+    required this.departments, // Add department to constructor
   });
 
   @override
@@ -192,8 +208,10 @@ class JobCard extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           backgroundImage: NetworkImage(logoUrl),
+          radius: 40, // Adjust the radius of the circle if needed
         ),
-        title: Text('Criteria: ${Criteria.toStringAsFixed(1)}'), // Format Criteria for display
+
+        title: Text(jobRole), // Format Criteria for display
         subtitle: Text(company),
         onTap: () {
           Navigator.push(
@@ -209,6 +227,7 @@ class JobCard extends StatelessWidget {
                 salary: salary,
                 skills: skills,
                 jobDescription: jobDescription,
+                departments: departments, // Pass department here
               ),
             ),
           );

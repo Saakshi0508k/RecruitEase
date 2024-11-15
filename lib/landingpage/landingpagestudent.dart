@@ -6,6 +6,7 @@ import 'package:recruite_ease/notification/notifications.dart';
 import 'package:recruite_ease/mock%20test/mockteststudent.dart';
 import 'package:recruite_ease/communitychatpage.dart';
 import 'leaderboard.dart';
+import 'package:recruite_ease/studentprofile.dart';
 
 class LandingPageStudent extends StatefulWidget {
   final String studentUsername;
@@ -155,6 +156,7 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Left side of the app bar - Greeting and Student Name
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -174,9 +176,25 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                       ),
               ],
             ),
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.blue[200],
+            // Right side of the app bar - Profile Avatar
+            GestureDetector(
+              onTap: () {
+                // Navigate to the StudentProfilePage when the CircleAvatar is tapped
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StudentProfilePage(
+                      studentUsername: studentUsername,
+                    ),
+                  ),
+                );
+              },
+              child: CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.transparent,
+                child: Image.asset(
+                    'assets/profile.png'), // Set the image for the profile
+              ),
             ),
           ],
         ),
@@ -220,14 +238,14 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                   // Scrollable Chart Cards Section
                   _buildSectionTitle('Placement Statistics'),
                   SizedBox(
-          height: 250, // Fixed height for charts
-          child: PageView(
-            children: [
-              _buildBarChart(),
-              _buildDoughnutChart(),
-            ],
-          ),
-        ),
+                    height: 250, // Fixed height for charts
+                    child: PageView(
+                      children: [
+                        _buildBarChart(),
+                        _buildDoughnutChart(),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 30),
                   _buildSectionTitle('For You'),
                   const SizedBox(height: 10),
@@ -293,43 +311,48 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: BarChart(
-  BarChartData(
-    titlesData: FlTitlesData(
-      leftTitles: SideTitles(showTitles: true),
-      bottomTitles: SideTitles(
-        showTitles: true,
-        getTitles: (double value) {
-          switch (value.toInt()) {
-            case 1:
-              return 'Barclays';
-            case 2:
-              return 'Carwale';
-            case 3:
-              return 'GM';
-            default:
-              return '';
-          }
-        },
-      ),
-    ),
-    borderData: FlBorderData(show: false),
-    barGroups: [
-      BarChartGroupData(
-        x: 1,
-        barRods: [BarChartRodData(y: 5, colors: [Colors.blue])],
-      ),
-      BarChartGroupData(
-        x: 2,
-        barRods: [BarChartRodData(y: 6, colors: [Colors.green])],
-      ),
-      BarChartGroupData(
-        x: 3,
-        barRods: [BarChartRodData(y: 2, colors: [Colors.orange])],
-      ),
-    ],
-  ),
-),
-
+          BarChartData(
+            titlesData: FlTitlesData(
+              leftTitles: SideTitles(showTitles: true),
+              bottomTitles: SideTitles(
+                showTitles: true,
+                getTitles: (double value) {
+                  switch (value.toInt()) {
+                    case 1:
+                      return 'Barclays';
+                    case 2:
+                      return 'Carwale';
+                    case 3:
+                      return 'GM';
+                    default:
+                      return '';
+                  }
+                },
+              ),
+            ),
+            borderData: FlBorderData(show: false),
+            barGroups: [
+              BarChartGroupData(
+                x: 1,
+                barRods: [
+                  BarChartRodData(y: 5, colors: [Colors.blue])
+                ],
+              ),
+              BarChartGroupData(
+                x: 2,
+                barRods: [
+                  BarChartRodData(y: 6, colors: [Colors.green])
+                ],
+              ),
+              BarChartGroupData(
+                x: 3,
+                barRods: [
+                  BarChartRodData(y: 2, colors: [Colors.orange])
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -343,18 +366,18 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
         child: PieChart(
           PieChartData(
             sections: [
-              PieChartSectionData(value: 50, color: Colors.blue, title: 'Comps'),
+              PieChartSectionData(
+                  value: 50, color: Colors.blue, title: 'Comps'),
               PieChartSectionData(value: 30, color: Colors.green, title: 'ECS'),
-              PieChartSectionData(value: 10, color: Colors.orange, title: 'AIDS'),
+              PieChartSectionData(
+                  value: 10, color: Colors.orange, title: 'AIDS'),
               PieChartSectionData(value: 20, color: Colors.pink, title: 'Mech'),
-
             ],
           ),
         ),
       ),
     );
   }
-
 
   Widget _buildHorizontalList(List<Map<String, dynamic>> jobs) {
     return SizedBox(
@@ -377,7 +400,8 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
       String title, String company, String log, String imageUrl) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5),
-      width: 200,
+      width: 240,
+      height: 400,
       decoration: BoxDecoration(
         color: Color(0xFF0A2E4D),
         borderRadius: BorderRadius.circular(15),
@@ -393,8 +417,14 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             imageUrl.isNotEmpty
-                ? Image.network(imageUrl,
-                    height: 100, width: 150, fit: BoxFit.cover)
+                ? FittedBox(
+                    fit: BoxFit.cover, // Ensures the image covers the rectangle
+                    child: Image.network(
+                      imageUrl,
+                      height: 100, // Adjust height as needed
+                      width: 200, // Adjust width as needed
+                    ),
+                  )
                 : const Icon(Icons.image_not_supported, color: Colors.white),
             const SizedBox(height: 10),
             Text(
@@ -410,11 +440,13 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
               style: const TextStyle(fontSize: 14, color: Colors.white70),
             ),
             const SizedBox(height: 10),
-            Text(
-              log,
-              style: const TextStyle(fontSize: 12, color: Colors.white60),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
+            Expanded(
+              child: Text(
+                log,
+                style: const TextStyle(fontSize: 12, color: Colors.white60),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+              ),
             ),
           ],
         ),
@@ -433,19 +465,18 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
               ),
               child: Container(
                 decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(0xFF0A2E4D),
-                              Color.fromARGB(255, 17, 89, 152),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF0A2E4D),
+                      Color.fromARGB(255, 17, 89, 152),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                ),
                 width: MediaQuery.of(context).size.width * 0.85,
                 padding: const EdgeInsets.all(20.0),
-                
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [

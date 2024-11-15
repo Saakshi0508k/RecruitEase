@@ -1,11 +1,13 @@
 import 'dart:io'; // Required for File class
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TPOEditJob extends StatefulWidget {
   final String jobId; // Declare jobId as a required parameter
 
-  const TPOEditJob({super.key, required this.jobId}); // Use this.jobId to pass the value
+  const TPOEditJob(
+      {super.key, required this.jobId}); // Use this.jobId to pass the value
 
   @override
   _TPOEditJobState createState() => _TPOEditJobState();
@@ -35,7 +37,8 @@ class _TPOEditJobState extends State<TPOEditJob> {
   // Function to select an image
   Future<void> _uploadImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile =
+        await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
@@ -47,10 +50,28 @@ class _TPOEditJobState extends State<TPOEditJob> {
   // Placeholder function for saving the edited job
   Future<void> _saveJob() async {
     if (_formKey.currentState!.validate()) {
-      // Handle job update here (e.g., send data to server or Firestore)
-      // Save job information, e.g., update Firestore with the new values
-      print('Job Updated');
-      Navigator.pop(context);
+      // Get a reference to the Firestore collection
+      final jobRef =
+          FirebaseFirestore.instance.collection('jobs').doc(widget.jobId);
+
+      // Update job data in Firestore
+      try {
+        await jobRef.update({
+          'Criteria': _Criteria,
+          'companyName': _companyName,
+          'city': _city,
+          'salary': _salary,
+          'jobType': _jobType,
+          'jobDescription': _jobDescription,
+          // You can also upload the image to Firebase Storage and store the image URL here
+          // 'imageUrl': imageUrl
+        });
+
+        print('Job updated successfully');
+        Navigator.pop(context); // Navigate back after successful update
+      } catch (e) {
+        print('Failed to update job: $e');
+      }
     }
   }
 
@@ -96,23 +117,39 @@ class _TPOEditJobState extends State<TPOEditJob> {
                       )
                     else
                       IconButton(
-                        icon: Icon(Icons.add_a_photo, color: Colors.grey[600], size: 40),
+                        icon: Icon(Icons.add_a_photo,
+                            color: Colors.grey[600], size: 40),
                         onPressed: _uploadImage,
                       ),
                     const SizedBox(height: 16.0),
-                    _buildTextField('Criteria', Icons.circle_notifications_outlined, (value) => _Criteria = value, initialValue: _Criteria),
-                    _buildTextField('Company Name', Icons.business, (value) => _companyName = value, initialValue: _companyName),
-                    _buildTextField('City', Icons.location_city, (value) => _city = value, initialValue: _city),
-                    _buildNumberField('Salary', Icons.attach_money, (value) => _salary = int.parse(value), initialValue: _salary.toString()),
+                    _buildTextField(
+                        'Criteria',
+                        Icons.circle_notifications_outlined,
+                        (value) => _Criteria = value,
+                        initialValue: _Criteria),
+                    _buildTextField('Company Name', Icons.business,
+                        (value) => _companyName = value,
+                        initialValue: _companyName),
+                    _buildTextField(
+                        'City', Icons.location_city, (value) => _city = value,
+                        initialValue: _city),
+                    _buildNumberField('Salary', Icons.attach_money,
+                        (value) => _salary = int.parse(value),
+                        initialValue: _salary.toString()),
                     _buildDropdownField(),
-                    _buildTextField('Job Description', Icons.description, (value) => _jobDescription = value, initialValue: _jobDescription, maxLines: 5),
+                    _buildTextField('Job Description', Icons.description,
+                        (value) => _jobDescription = value,
+                        initialValue: _jobDescription, maxLines: 5),
                     const SizedBox(height: 20.0),
                     ElevatedButton.icon(
-                      onPressed: _saveJob, // Save changes when button is pressed
-                      label: const Text('Save Changes', style: TextStyle(color: Colors.white)),
+                      onPressed:
+                          _saveJob, // Save changes when button is pressed
+                      label: const Text('Save Changes',
+                          style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF0A2E4D),
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
@@ -130,7 +167,9 @@ class _TPOEditJobState extends State<TPOEditJob> {
   }
 
   // Text field for input
-  Widget _buildTextField(String label, IconData icon, ValueChanged<String> onChanged, {String? initialValue, int maxLines = 1}) {
+  Widget _buildTextField(
+      String label, IconData icon, ValueChanged<String> onChanged,
+      {String? initialValue, int maxLines = 1}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
@@ -145,14 +184,17 @@ class _TPOEditJobState extends State<TPOEditJob> {
           fillColor: Colors.grey[100],
         ),
         maxLines: maxLines,
-        validator: (value) => value == null || value.isEmpty ? 'Please enter $label' : null,
+        validator: (value) =>
+            value == null || value.isEmpty ? 'Please enter $label' : null,
         onChanged: onChanged,
       ),
     );
   }
 
   // Number field for salary input
-  Widget _buildNumberField(String label, IconData icon, ValueChanged<String> onChanged, {String? initialValue}) {
+  Widget _buildNumberField(
+      String label, IconData icon, ValueChanged<String> onChanged,
+      {String? initialValue}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(

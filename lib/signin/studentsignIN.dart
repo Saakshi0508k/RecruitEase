@@ -16,8 +16,7 @@ class _StudentsigninState extends State<Studentsignin> {
   final TextEditingController _mobileController = TextEditingController();
 
   // Placeholder image URL
-  final String _placeholderImageUrl =
-      'https://www.example.com/assets/profile_placeholder.png';
+  final String _placeholderImageUrl = 'assets/profile.png';
 
   // Save basic details to Firestore
   Future<void> _saveDataAndNext() async {
@@ -46,7 +45,6 @@ class _StudentsigninState extends State<Studentsignin> {
         'email': email,
         'password': password,
         'mobile': mobile,
-        'profileImage': _placeholderImageUrl,
       });
 
       // Navigate to the ExtraDetailsPage with the username passed to it
