@@ -7,6 +7,25 @@ class StudentAppliedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // List of sample students' data
+    final List<Map<String, String>> students = [
+      {
+        'name': 'Sakshi',
+        'email': 'sakshi@example.com',
+        'imageUrl': 'assets/profile.png',
+      },
+      {
+        'name': 'Shashank',
+        'email': 'crce,9935.ce@gmail.com',
+        'imageUrl': 'assets/profile.png',
+      },
+      {
+        'name': 'Samarth',
+        'email': 'crce.9855.ce@gmail.com',
+        'imageUrl': 'assets/profile.png',
+      },
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -15,7 +34,8 @@ class StudentAppliedPage extends StatelessWidget {
         ),
         backgroundColor: Color(0xFF0A2E4D), // AppBar background color
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back button
+          icon: const Icon(Icons.arrow_back,
+              color: Colors.white), // White back button
           onPressed: () {
             Navigator.pop(context);
           },
@@ -39,13 +59,15 @@ class StudentAppliedPage extends StatelessWidget {
             const SizedBox(height: 16.0),
             Expanded(
               child: ListView.builder(
-                itemCount: 2, // Replace with actual applicant count
+                itemCount:
+                    students.length, // Use the length of the students list
                 itemBuilder: (context, index) {
-                  // Sample applicant data, replace with dynamic data
+                  // Get student data from the list
+                  final student = students[index];
                   return ApplicantCard(
-                    name: 'Saloni Mehta',
-                    email: 'saloni19@gmail.com',
-                    imageUrl: 'https://example.com/saloni_profile.jpg',
+                    name: student['name']!,
+                    email: student['email']!,
+                    imageUrl: student['imageUrl']!,
                     jobId: jobId, // Pass jobId for possible future use
                   );
                 },

@@ -7,6 +7,7 @@ import 'package:recruite_ease/mock%20test/mockteststudent.dart';
 import 'package:recruite_ease/communitychatpage.dart';
 import 'leaderboard.dart';
 import 'package:recruite_ease/studentprofile.dart';
+import 'package:recruite_ease/job creation/studentjob.dart';
 
 class LandingPageStudent extends StatefulWidget {
   final String studentUsername;
@@ -21,7 +22,6 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
   int _currentIndex = 0;
   String studentName = '';
   late String studentUsername;
-  List<Map<String, dynamic>> forYouJobs = [];
   List<Map<String, dynamic>> upcomingOpportunities = [];
   List<Map<String, dynamic>> leaderboardData = [];
   bool isLoading = true;
@@ -39,6 +39,11 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
   }
 
   Future<void> fetchLeaderboardData() async {
+    Text(
+      studentUsername ?? 'No Username Available', // Fallback if null
+      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      textAlign: TextAlign.center,
+    );
     try {
       final snapshot = await _firestore
           .collection('mockTestResults')
@@ -84,6 +89,11 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
   }
 
   Future<void> _fetchStudentData() async {
+    Text(
+      studentUsername ?? 'No Username Available', // Fallback if null
+      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      textAlign: TextAlign.center,
+    );
     try {
       QuerySnapshot snapshot = await _firestore
           .collection('students')
@@ -113,7 +123,7 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
   Future<void> _fetchJobData() async {
     try {
       QuerySnapshot jobSnapshot = await _firestore.collection('jobs').get();
-      List<Map<String, dynamic>> forYouJobsTemp = [];
+
       List<Map<String, dynamic>> upcomingOpportunitiesTemp = [];
 
       for (var jobDoc in jobSnapshot.docs) {
@@ -121,13 +131,6 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
         String companyName = jobDoc['companyName'] ?? 'No Company';
         String jobLog = jobDoc['jobDescription'] ?? 'No Description';
         String imageUrl = jobDoc['imageUrl'] ?? '';
-
-        forYouJobsTemp.add({
-          'title': jobRole,
-          'company': companyName,
-          'log': jobLog,
-          'imageUrl': imageUrl,
-        });
 
         upcomingOpportunitiesTemp.add({
           'title': jobRole,
@@ -138,7 +141,6 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
       }
 
       setState(() {
-        forYouJobs = forYouJobsTemp;
         upcomingOpportunities = upcomingOpportunitiesTemp;
       });
     } catch (e) {
@@ -221,16 +223,23 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                                 builder: (context) => LeaderboardPage()),
                           );
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0A2E4D),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
                         child: Text(
                           'View All',
                           style: TextStyle(
-                            color: Colors.blue,
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 10),
                   _buildLeaderboardCard(),
                   const SizedBox(height: 20),
@@ -247,11 +256,32 @@ class _LandingPageStudentState extends State<LandingPageStudent> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  _buildSectionTitle('For You'),
-                  const SizedBox(height: 10),
-                  _buildHorizontalList(forYouJobs),
-                  const SizedBox(height: 30),
-                  _buildSectionTitle('Upcoming Opportunities'),
+                  Row(
+                    children: [
+                      _buildSectionTitle('Upcoming Opportunities'),
+                      const Spacer(), // Pushes the button to the right
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => StudentJobPage(
+                                    studentUsername: studentUsername)),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0A2E4D),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          "View All",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 10),
                   _buildHorizontalList(upcomingOpportunities),
                   const SizedBox(height: 30),
