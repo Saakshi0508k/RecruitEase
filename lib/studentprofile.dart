@@ -14,23 +14,32 @@ class StudentProfilePage extends StatefulWidget {
 class _StudentProfilePageState extends State<StudentProfilePage> {
   late Future<QuerySnapshot> studentData;
 
+  final Color primaryColor = Color(0xFF0A2E4D);
+  final Color secondaryColor = Colors.white;
+
   @override
   void initState() {
     super.initState();
-    print('Fetching data for student: ${widget.studentUsername}');
-    // Fetch student data based on the "username" field in Firestore
     studentData = FirebaseFirestore.instance
         .collection('students')
-        .where('username',
-            isEqualTo: widget.studentUsername) // Query by "username" field
+        .where('username', isEqualTo: widget.studentUsername)
         .get();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: secondaryColor,
       appBar: AppBar(
-        title: Text("Student Profile"),
+        title: Text("Student Profile", style: TextStyle(color: Colors.white)),
+        backgroundColor: primaryColor,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back button
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        elevation: 0,
       ),
       body: FutureBuilder<QuerySnapshot>(
         future: studentData,
@@ -40,110 +49,138 @@ class _StudentProfilePageState extends State<StudentProfilePage> {
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
+            return Center(
+              child: Text(
+                "Error: ${snapshot.error}",
+                style: TextStyle(color: Colors.red),
+              ),
+            );
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            print('No documents found for username: ${widget.studentUsername}');
-            return Center(child: Text("No data found for this username"));
+            return Center(
+              child: Text(
+                "No data found for this username",
+                style: TextStyle(
+                  color: primaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            );
           }
 
-          // Log the data of the first document
           var student = snapshot.data!.docs[0].data() as Map<String, dynamic>;
-          print('Fetched student data: $student');
-
-          // Extract student information with null checks
           String name = student['name'] ?? 'No Name Available';
           String username = student['username'] ?? 'No Username Available';
-          String cgpi = student['cgpi'] ?? 'No CGPI Available';
+          dynamic cgpi = student['cgpi'] ?? 'No CGPI Available';
           String studentClass = student['class'] ?? 'No Class Available';
-          String department =
-              student['department'] ?? 'No Department Available';
+          String department = student['department'] ?? 'No Department Available';
           String email = student['email'] ?? 'No Email Available';
           String mobile = student['mobile'] ?? 'No Mobile Available';
-          String yearOfPassing =
-              student['yearOfPassing'] ?? 'No Year Available';
+          String yearOfPassing = student['yearOfPassing'] ?? 'No Year Available';
           String skills = student['skills'] ?? 'No Skills Available';
           String resumeUrl = student['resumeUrl'] ?? '';
 
-          return Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Profile Image (CircleAvatar)
-                Center(
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage: AssetImage(
-                        'assets/profile.png'), // Replace with actual image path or URL if available
-                  ),
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                SizedBox(height: 20),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Profile Image
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage: AssetImage('assets/profile.png'),
+                        backgroundColor: primaryColor.withOpacity(0.1),
+                      ),
+                      SizedBox(height: 20),
 
-                // Displaying Student Details
-                Text(
-                  'Name: $name',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  'Username: $username',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'CGPI: $cgpi',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'Class: $studentClass',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'Department: $department',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'Email: $email',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'Mobile: $mobile',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'Year of Passing: $yearOfPassing',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  'Skills: $skills',
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(height: 20),
+                      // Name
+                      Text(
+                        name,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: primaryColor,
+                        ),
+                      ),
+                      SizedBox(height: 10),
 
-                // Resume URL (Clickable link)
-                resumeUrl.isNotEmpty
-                    ? GestureDetector(
-                        onTap: () async {
-                          if (await canLaunch(resumeUrl)) {
-                            await launch(resumeUrl);
-                          } else {
-                            throw 'Could not open the resume URL';
-                          }
-                        },
-                        child: Text(
-                          'Resume: Tap to View',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 16,
-                            decoration: TextDecoration.underline,
+                      // Other Details
+                      _buildDetailRow("Username", username),
+                      _buildDetailRow("CGPI", cgpi.toString()),
+                      _buildDetailRow("Class", studentClass),
+                      _buildDetailRow("Department", department),
+                      _buildDetailRow("Email", email),
+                      _buildDetailRow("Mobile", mobile),
+                      _buildDetailRow("Year of Passing", yearOfPassing),
+                      _buildDetailRow("Skills", skills),
+                      SizedBox(height: 20),
+
+                      // Resume Link
+                      if (resumeUrl.isNotEmpty)
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            if (await canLaunch(resumeUrl)) {
+                              await launch(resumeUrl);
+                            } else {
+                              throw 'Could not open the resume URL';
+                            }
+                          },
+                          icon: Icon(Icons.open_in_browser),
+                          label: Text("View Resume", style: TextStyle(color: Colors.white),),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryColor,
+                            iconColor: secondaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
                         ),
-                      )
-                    : Container(), // If no resume URL, do not show the text
-              ],
+                    ],
+                  ),
+                ),
+              ),
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "$label: ",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: primaryColor,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[700],
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }
